@@ -1,4 +1,4 @@
-﻿# Wanderline travel API + Postgres on Render
+# Wanderline travel API + Postgres on Render
 databases:
   - name: wanderline-db
     plan: free
@@ -48,5 +48,3 @@ services:
         value: ""
       - key: AI_SERVICE_KEY
         sync: false
-      - key: STORAGE_MODE
-        value: postgres
