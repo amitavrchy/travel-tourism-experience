@@ -219,6 +219,13 @@ test("navigation, public pages and reduced-motion layouts remain accessible", as
 }, info) => {
   const errors: string[] = [];
   page.on("pageerror", (error) => errors.push(error.message));
+  page.on("console", (message) => {
+    if (
+      message.type() === "error" &&
+      /hydrat|did not match|cannot update/i.test(message.text())
+    )
+      errors.push(message.text());
+  });
   for (const url of [
     "/",
     "/destinations",

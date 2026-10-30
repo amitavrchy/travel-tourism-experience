@@ -418,7 +418,7 @@ export function Home() {
         <div className="container our-way-grid">
           <Reveal className="our-way-photo">
             <Image
-              src="/images/srilanka.jpg"
+              src="/images/srilanka-ella.jpg"
               alt="Green hill country in Sri Lanka"
               fill
               sizes="(max-width: 760px) 90vw, 45vw"

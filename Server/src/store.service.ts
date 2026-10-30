@@ -25,7 +25,11 @@ type State = Record<Collection, Row[]>;
 type Delegate = {
   findMany(): Promise<Row[]>;
   create(args: { data: Row }): Promise<Row>;
-  upsert(args: { where: { id: string }; create: Row; update: Partial<Row> }): Promise<Row>;
+  upsert(args: {
+    where: { id: string };
+    create: Row;
+    update: Partial<Row>;
+  }): Promise<Row>;
   update(args: { where: { id: string }; data: Partial<Row> }): Promise<Row>;
   delete(args: { where: { id: string } }): Promise<Row>;
 };
@@ -67,18 +71,33 @@ export class StoreService implements OnModuleInit, OnModuleDestroy {
     if (process.env.STORAGE_MODE === 'postgres') {
       this.prisma = new PrismaClient();
       await this.prisma.$connect();
-      const seeded = await this.prisma.appState.findUnique({ where: { key: 'catalog-v1' } });
+      const seeded = await this.prisma.appState.findUnique({
+        where: { key: 'catalog-v1' },
+      });
       // A durable marker preserves editorial deletions across API restarts.
       if (!seeded) {
         for (const collection of publicCollections) {
           const existing = await this.all(collection);
           for (const row of catalog[collection] || []) {
-            if (!existing.some(item => item.id === row.id || (row.slug && item.slug === row.slug))) {
-              await this.delegate(collection).upsert({ where: { id: row.id }, create: row, update: {} });
+            if (
+              !existing.some(
+                (item) =>
+                  item.id === row.id || (row.slug && item.slug === row.slug),
+              )
+            ) {
+              await this.delegate(collection).upsert({
+                where: { id: row.id },
+                create: row,
+                update: {},
+              });
             }
           }
         }
-        await this.prisma.appState.upsert({ where: { key: 'catalog-v1' }, create: { key: 'catalog-v1', value: 'initialized' }, update: {} });
+        await this.prisma.appState.upsert({
+          where: { key: 'catalog-v1' },
+          create: { key: 'catalog-v1', value: 'initialized' },
+          update: {},
+        });
       }
     } else {
       await mkdir(this.directory, { recursive: true });
@@ -98,6 +117,19 @@ export class StoreService implements OnModuleInit, OnModuleDestroy {
           ...catalog,
         };
         await this.persist(this.state);
+      }
+    }
+    // Version a corrected seed photograph without overwriting editorial fields.
+    // Existing local stores may still point at the previous image URL.
+    for (const collection of publicCollections) {
+      for (const row of await this.all(collection)) {
+        const changes: Partial<Row> = {};
+        for (const field of ['heroImage', 'imageUrl', 'coverImage']) {
+          if (row[field] === '/images/srilanka.jpg')
+            changes[field] = '/images/srilanka-ella.jpg';
+        }
+        if (Object.keys(changes).length)
+          await this.update(collection, row.id, changes);
       }
     }
   }

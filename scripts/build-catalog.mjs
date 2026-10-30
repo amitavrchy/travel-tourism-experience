@@ -78,7 +78,7 @@ const destinations = [
     tagline: "Wild at heart. Warm by nature.",
     description:
       "Take the slow train into tea country, watch the hills turn gold, and make time for a conversation over a cup of freshly brewed Ceylon tea. A small island with an extraordinary sense of possibility.",
-    heroImage: "/images/srilanka.jpg",
+    heroImage: "/images/srilanka-ella.jpg",
     lat: 6.8667,
     lng: 81.0466,
     bestMonths: [1, 2, 3, 4, 7, 8],
@@ -411,7 +411,7 @@ const journal = [
     excerpt:
       "Fewer places. Deeper connections. Why the best journeys leave room for the unexpected.",
     category: "A WAY OF TRAVELING",
-    coverImage: "/images/srilanka.jpg",
+    coverImage: "/images/srilanka-ella.jpg",
     readMinutes: 5,
     publishedAt: "2026-09-18T00:00:00.000Z",
     body: "There is a moment on every journey when the itinerary stops mattering. Maybe it happens over a second cup of tea, or halfway through a conversation with someone whose language you barely speak. You stop thinking about what comes next. You are simply there.\n\nSlow travel begins with a small decision: choose one place and give it time. Instead of three cities in five days, stay in one neighborhood. Learn the walk to the bakery. Recognize the person who makes your coffee. Let a place become a little familiar.\n\nLeave a morning unplanned. Take a local bus. Ask your host where they go on a free afternoon. These are small things, but they change the texture of a trip. A destination becomes a collection of people and moments, rather than a checklist.\n\nA family-run stay, a local guide, a meal made with seasonal produce: your choices help keep the character of a place alive. Ask questions, follow local guidance, and remember that someone else calls your destination home.\n\nYou may come back with fewer photographs. But you will probably have more stories.",
