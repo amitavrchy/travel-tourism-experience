@@ -8,7 +8,11 @@ async function proxy(request: NextRequest, context: { params: Promise<{ path: st
   if (path.some(part => !/^[a-zA-Z0-9_-]+$/.test(part))) return NextResponse.json({ message: "Invalid API path." }, { status: 400 });
   if (!["GET", "HEAD"].includes(request.method)) {
     const origin = request.headers.get("origin");
-    if (origin && origin !== request.nextUrl.origin) return NextResponse.json({ message: "Invalid request origin." }, { status: 403 });
+    if (origin) {
+      let valid = false;
+      try { valid = new URL(origin).host === request.headers.get("host"); } catch { /* Invalid Origin header. */ }
+      if (!valid) return NextResponse.json({ message: "Invalid request origin." }, { status: 403 });
+    }
   }
   if (path.join("/") === "auth/logout") {
     const response = NextResponse.json({ success: true });
@@ -24,6 +28,7 @@ async function proxy(request: NextRequest, context: { params: Promise<{ path: st
     const upstream = await fetch(`${API}/${path.join("/")}${request.nextUrl.search}`, {
       method: request.method, headers, body, cache: "no-store", signal: AbortSignal.any([request.signal, AbortSignal.timeout(90000)]),
     });
+    if (upstream.headers.get("content-type")?.includes("text/event-stream")) return new Response(upstream.body, { status: upstream.status, headers: { "Content-Type": "text/event-stream", "Cache-Control": "no-cache, no-transform", "X-Accel-Buffering": "no" } });
     const payload = await upstream.json();
     const { token: sessionToken, ...safe } = payload && !Array.isArray(payload) ? payload : { token: undefined };
     const response = NextResponse.json(Array.isArray(payload) ? payload : safe, { status: upstream.status, headers: { "Cache-Control": "no-store" } });
