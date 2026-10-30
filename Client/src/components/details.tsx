@@ -3,33 +3,366 @@ import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { ArrowLeft, ArrowUpRight, CalendarDays, Check, ChevronDown, Clock3, Compass, Leaf, MapPin, Sparkles, Users } from "lucide-react";
+import {
+  ArrowLeft,
+  ArrowUpRight,
+  CalendarDays,
+  Check,
+  ChevronDown,
+  Clock3,
+  Compass,
+  Leaf,
+  MapPin,
+  Sparkles,
+  Users,
+} from "lucide-react";
 import { money } from "@/lib/catalog";
-import type { Destination, Experience, JournalPost, Trip } from "@/lib/types";
+import type { Destination, Experience, JournalPost } from "@/lib/types";
 import { useCatalog } from "./providers";
 import { ExperienceCard, TripCard } from "./cards";
 import { MapView } from "./map/map-view";
 import { Reveal } from "./motion";
 
-export function DetailHero({ image, title, subtitle, eyebrow, backHref, backLabel }: { image: string; title: string; subtitle: string; eyebrow: string; backHref: string; backLabel: string }) {
-  return <section className="detail-hero"><Image src={image} alt={title} fill priority sizes="100vw" /><div className="container detail-hero-content"><div className="breadcrumb"><Link href={backHref}>{backLabel}</Link><span>/</span><span>{title}</span></div><p className="eyebrow">{eyebrow}</p><h1>{title}</h1><p>{subtitle}</p></div></section>;
+export function DetailHero({
+  image,
+  title,
+  subtitle,
+  eyebrow,
+  backHref,
+  backLabel,
+}: {
+  image: string;
+  title: string;
+  subtitle: string;
+  eyebrow: string;
+  backHref: string;
+  backLabel: string;
+}) {
+  return (
+    <section className="detail-hero">
+      <Image src={image} alt={title} fill priority sizes="100vw" />
+      <div className="container detail-hero-content">
+        <div className="breadcrumb">
+          <Link href={backHref}>{backLabel}</Link>
+          <span>/</span>
+          <span>{title}</span>
+        </div>
+        <p className="eyebrow">{eyebrow}</p>
+        <h1>{title}</h1>
+        <p>{subtitle}</p>
+      </div>
+    </section>
+  );
 }
 export function DestinationDetail({ initial }: { initial: Destination }) {
-  const { data } = useCatalog(); const d = data.destinations.find(item => item.id === initial.id) || initial;
-  const pois = data.pois.filter(p => p.destinationId === d.id); const trips = data.packages.filter(t => t.destinationId === d.id); const experiences = data.experiences.filter(e => e.destinationId === d.id);
-  return <><DetailHero image={d.heroImage} title={d.name} subtitle={d.tagline} eyebrow={`${d.country} · ${d.region}`} backHref="/destinations" backLabel="All destinations" /><div className="container detail-layout"><div className="detail-copy"><Reveal><p className="eyebrow">A PLACE TO FEEL A LITTLE MORE ALIVE</p><h2>{d.reading}.</h2><p>{d.description}</p><div className="detail-facts"><div><CalendarDays size={21} /><small>BEST TIME TO GO</small><strong>{d.bestSeason}</strong></div><div><Compass size={21} /><small>YOUR KIND OF PLACE</small><strong>{d.tags.slice(0, 2).join(" & ")}</strong></div><div><MapPin size={21} /><small>A LITTLE PERSPECTIVE</small><strong>{Math.abs(d.lat).toFixed(2)}° {d.lat < 0 ? "S" : "N"} · {Math.abs(d.lng).toFixed(2)}° {d.lng < 0 ? "W" : "E"}</strong></div></div></Reveal><section className="detail-block"><p className="eyebrow">KNOW A PLACE, ONE MOMENT AT A TIME</p><h2>A few places to begin.</h2><MapView points={pois} /><div className="poi-list">{pois.map((poi, index) => <div key={poi.id} className="poi-row"><span className="poi-number">0{index + 1}</span><div><small>{poi.kind}</small><h3>{poi.name}</h3><p>{poi.description}</p></div></div>)}</div></section><section className="detail-block"><p className="eyebrow">PEOPLE MAKE THE PLACE</p><h2>Go a little deeper.</h2><div className="two-grid">{experiences.map(e => <ExperienceCard key={e.id} experience={e} />)}</div></section><section className="detail-block"><h2>A journey to call your own.</h2><div className="two-grid">{trips.map(trip => <TripCard key={trip.id} trip={trip} destination={d} />)}</div></section></div><aside className="booking-card"><p className="eyebrow">YOUR NEXT CHAPTER</p><h3 style={{ marginTop: 16 }}>A little more {d.name}.</h3><p>Make it your own with a personal itinerary, or choose one of our thoughtfully curated journeys.</p><p className="booking-price">{money(d.startingPrice)} <small>/ person, from</small></p>{trips[0] && <Link href={`/trips/${trips[0].slug}`} className="button button-dark">Explore the journey<ArrowUpRight size={17} /></Link>}<Link href={`/plan?destination=${d.slug}`} className="button button-outline" style={{ marginTop: 12 }}><Sparkles size={16} />Plan it my way</Link><p className="booking-note">Thoughtful travel begins with a little curiosity.</p></aside></div></>;
+  const { data } = useCatalog();
+  const d = data.destinations.find((item) => item.id === initial.id) || initial;
+  const pois = data.pois.filter((p) => p.destinationId === d.id);
+  const trips = data.packages.filter((t) => t.destinationId === d.id);
+  const experiences = data.experiences.filter((e) => e.destinationId === d.id);
+  return (
+    <>
+      <DetailHero
+        image={d.heroImage}
+        title={d.name}
+        subtitle={d.tagline}
+        eyebrow={`${d.country} · ${d.region}`}
+        backHref="/destinations"
+        backLabel="All destinations"
+      />
+      <div className="container detail-layout">
+        <div className="detail-copy">
+          <Reveal>
+            <p className="eyebrow">A PLACE TO FEEL A LITTLE MORE ALIVE</p>
+            <h2>{d.reading}.</h2>
+            <p>{d.description}</p>
+            <div className="detail-facts">
+              <div>
+                <CalendarDays size={21} />
+                <small>BEST TIME TO GO</small>
+                <strong>{d.bestSeason}</strong>
+              </div>
+              <div>
+                <Compass size={21} />
+                <small>YOUR KIND OF PLACE</small>
+                <strong>{d.tags.slice(0, 2).join(" & ")}</strong>
+              </div>
+              <div>
+                <MapPin size={21} />
+                <small>A LITTLE PERSPECTIVE</small>
+                <strong>
+                  {Math.abs(d.lat).toFixed(2)}° {d.lat < 0 ? "S" : "N"} ·{" "}
+                  {Math.abs(d.lng).toFixed(2)}° {d.lng < 0 ? "W" : "E"}
+                </strong>
+              </div>
+            </div>
+          </Reveal>
+          <section className="detail-block">
+            <p className="eyebrow">KNOW A PLACE, ONE MOMENT AT A TIME</p>
+            <h2>A few places to begin.</h2>
+            <MapView points={pois} />
+            <div className="poi-list">
+              {pois.map((poi, index) => (
+                <div key={poi.id} className="poi-row">
+                  <span className="poi-number">0{index + 1}</span>
+                  <div>
+                    <small>{poi.kind}</small>
+                    <h3>{poi.name}</h3>
+                    <p>{poi.description}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </section>
+          <section className="detail-block">
+            <p className="eyebrow">PEOPLE MAKE THE PLACE</p>
+            <h2>Go a little deeper.</h2>
+            <div className="two-grid">
+              {experiences.map((e) => (
+                <ExperienceCard key={e.id} experience={e} />
+              ))}
+            </div>
+          </section>
+          <section className="detail-block">
+            <h2>A journey to call your own.</h2>
+            <div className="two-grid">
+              {trips.map((trip) => (
+                <TripCard key={trip.id} trip={trip} destination={d} />
+              ))}
+            </div>
+          </section>
+        </div>
+        <aside className="booking-card">
+          <p className="eyebrow">YOUR NEXT CHAPTER</p>
+          <h3 style={{ marginTop: 16 }}>A little more {d.name}.</h3>
+          <p>
+            Make it your own with a personal itinerary, or choose one of our
+            thoughtfully curated journeys.
+          </p>
+          <p className="booking-price">
+            {money(d.startingPrice)} <small>/ person, from</small>
+          </p>
+          {trips[0] && (
+            <Link
+              href={`/trips/${trips[0].slug}`}
+              className="button button-dark"
+            >
+              Explore the journey
+              <ArrowUpRight size={17} />
+            </Link>
+          )}
+          <Link
+            href={`/plan?destination=${d.slug}`}
+            className="button button-outline"
+            style={{ marginTop: 12 }}
+          >
+            <Sparkles size={16} />
+            Plan it my way
+          </Link>
+          <p className="booking-note">
+            Thoughtful travel begins with a little curiosity.
+          </p>
+        </aside>
+      </div>
+    </>
+  );
 }
 
-export function Accordion({ number, title, children, defaultOpen = false }: { number: number; title: string; children: React.ReactNode; defaultOpen?: boolean }) {
+export function Accordion({
+  number,
+  title,
+  children,
+  defaultOpen = false,
+}: {
+  number: number;
+  title: string;
+  children: React.ReactNode;
+  defaultOpen?: boolean;
+}) {
   const [open, setOpen] = useState(defaultOpen);
-  return <div className="day-accordion"><button className="day-heading" aria-expanded={open} onClick={() => setOpen(!open)}><span>{String(number).padStart(2, "0")}</span><div><small>DAY {number}</small><h3>{title}</h3></div><ChevronDown size={18} style={{ transform: open ? "rotate(180deg)" : undefined, transition: "transform 300ms" }} /></button><AnimatePresence initial={false}>{open && <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={{ duration: .3 }}><div className="day-content">{children}</div></motion.div>}</AnimatePresence></div>;
+  return (
+    <div className="day-accordion">
+      <button
+        className="day-heading"
+        aria-expanded={open}
+        onClick={() => setOpen(!open)}
+      >
+        <span>{String(number).padStart(2, "0")}</span>
+        <div>
+          <small>DAY {number}</small>
+          <h3>{title}</h3>
+        </div>
+        <ChevronDown
+          size={18}
+          style={{
+            transform: open ? "rotate(180deg)" : undefined,
+            transition: "transform 300ms",
+          }}
+        />
+      </button>
+      <AnimatePresence initial={false}>
+        {open && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.3 }}
+          >
+            <div className="day-content">{children}</div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
 }
 
-export function ExperienceDetail({ experience: e, destination: d }: { experience: Experience; destination: Destination }) {
-  const { data } = useCatalog(); const trip = data.packages.find(t => t.destinationId === d.id);
-  return <><DetailHero image={e.imageUrl} title={e.title} subtitle={e.summary} eyebrow={`LOCALLY LED · ${d.name}, ${d.country}`} backHref={`/destinations/${d.slug}`} backLabel={d.name} /><div className="container detail-layout"><div className="detail-copy"><p className="eyebrow">SMALL MOMENTS. LASTING CONNECTIONS.</p><h2>A different way to know {d.name}.</h2><p>{e.summary} Travel with a local host, leave room for conversation, and discover the stories behind the places you visit.</p><div className="detail-facts"><div><Clock3 size={22} /><small>DURATION</small><strong>{e.durationHours} hours</strong></div><div><Leaf size={22} /><small>ACTIVITY LEVEL</small><strong>{e.difficulty}</strong></div><div><Users size={22} /><small>THE COMPANY</small><strong>Small groups · Local host</strong></div></div><h2>What to expect.</h2><ul className="included-list">{["An introduction to local traditions from your host", "A relaxed pace with time for questions and conversation", "Practical advice and meeting details with your confirmed booking"].map(item => <li key={item}><Check size={17} />{item}</li>)}</ul><p>Wear comfortable shoes, carry drinking water, and tell us about any access or dietary needs when you enquire. Availability and meeting arrangements are confirmed by the local team.</p><div className="detail-block"><MapView points={data.pois.filter(p => p.destinationId === d.id)} /></div></div><aside className="booking-card"><p className="eyebrow">ADD A LITTLE MEANING</p><p className="booking-price">{money(e.priceFrom)} <small>/ person, from</small></p><p>Ask us to include this experience in your journey. Your host, date, and final price are confirmed before you commit.</p>{trip && <Link href={`/trips/${trip.slug}?experience=${e.slug}`} className="button button-dark">Enquire with a journey<ArrowUpRight size={17} /></Link>}<Link href={`/plan?destination=${d.slug}`} className="button button-outline" style={{ marginTop: 12 }}><Sparkles size={16} />Create a personal plan</Link></aside></div></>;
+export function ExperienceDetail({
+  experience: e,
+  destination: d,
+}: {
+  experience: Experience;
+  destination: Destination;
+}) {
+  const { data } = useCatalog();
+  const trip = data.packages.find((t) => t.destinationId === d.id);
+  return (
+    <>
+      <DetailHero
+        image={e.imageUrl}
+        title={e.title}
+        subtitle={e.summary}
+        eyebrow={`LOCALLY LED · ${d.name}, ${d.country}`}
+        backHref={`/destinations/${d.slug}`}
+        backLabel={d.name}
+      />
+      <div className="container detail-layout">
+        <div className="detail-copy">
+          <p className="eyebrow">SMALL MOMENTS. LASTING CONNECTIONS.</p>
+          <h2>A different way to know {d.name}.</h2>
+          <p>
+            {e.summary} Travel with a local host, leave room for conversation,
+            and discover the stories behind the places you visit.
+          </p>
+          <div className="detail-facts">
+            <div>
+              <Clock3 size={22} />
+              <small>DURATION</small>
+              <strong>{e.durationHours} hours</strong>
+            </div>
+            <div>
+              <Leaf size={22} />
+              <small>ACTIVITY LEVEL</small>
+              <strong>{e.difficulty}</strong>
+            </div>
+            <div>
+              <Users size={22} />
+              <small>THE COMPANY</small>
+              <strong>Small groups · Local host</strong>
+            </div>
+          </div>
+          <h2>What to expect.</h2>
+          <ul className="included-list">
+            {[
+              "An introduction to local traditions from your host",
+              "A relaxed pace with time for questions and conversation",
+              "Practical advice and meeting details with your confirmed booking",
+            ].map((item) => (
+              <li key={item}>
+                <Check size={17} />
+                {item}
+              </li>
+            ))}
+          </ul>
+          <p>
+            Wear comfortable shoes, carry drinking water, and tell us about any
+            access or dietary needs when you enquire. Availability and meeting
+            arrangements are confirmed by the local team.
+          </p>
+          <div className="detail-block">
+            <MapView
+              points={data.pois.filter((p) => p.destinationId === d.id)}
+            />
+          </div>
+        </div>
+        <aside className="booking-card">
+          <p className="eyebrow">ADD A LITTLE MEANING</p>
+          <p className="booking-price">
+            {money(e.priceFrom)} <small>/ person, from</small>
+          </p>
+          <p>
+            Ask us to include this experience in your journey. Your host, date,
+            and final price are confirmed before you commit.
+          </p>
+          {trip && (
+            <Link
+              href={`/trips/${trip.slug}?experience=${e.slug}`}
+              className="button button-dark"
+            >
+              Enquire with a journey
+              <ArrowUpRight size={17} />
+            </Link>
+          )}
+          <Link
+            href={`/plan?destination=${d.slug}`}
+            className="button button-outline"
+            style={{ marginTop: 12 }}
+          >
+            <Sparkles size={16} />
+            Create a personal plan
+          </Link>
+        </aside>
+      </div>
+    </>
+  );
 }
 
 export function Article({ post }: { post: JournalPost }) {
-  return <article className="container article"><header className="article-header"><Link href="/journal" className="text-link"><ArrowLeft size={15} />Back to the journal</Link><p className="eyebrow" style={{ marginTop: 35 }}>{post.category}</p><h1>{post.title}</h1><p>{post.excerpt}</p><div className="article-meta"><span>By the Wanderline team</span><time dateTime={post.publishedAt}>{new Date(post.publishedAt).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric", timeZone: "UTC" })}</time><span>{post.readMinutes} min read</span></div></header><div className="article-cover"><Image src={post.coverImage} alt={post.title} fill priority sizes="730px" /></div><div className="article-body">{post.body.split("\n\n").map((paragraph, i) => <p key={i}>{paragraph}</p>)}<div className="article-footer"><span className="eyebrow">A LITTLE INSPIRED?</span><Link className="text-link" href="/plan">Start your next chapter<ArrowUpRight size={16} /></Link></div></div></article>;
+  return (
+    <article className="container article">
+      <header className="article-header">
+        <Link href="/journal" className="text-link">
+          <ArrowLeft size={15} />
+          Back to the journal
+        </Link>
+        <p className="eyebrow" style={{ marginTop: 35 }}>
+          {post.category}
+        </p>
+        <h1>{post.title}</h1>
+        <p>{post.excerpt}</p>
+        <div className="article-meta">
+          <span>By the Wanderline team</span>
+          <time dateTime={post.publishedAt}>
+            {new Date(post.publishedAt).toLocaleDateString("en-US", {
+              month: "long",
+              day: "numeric",
+              year: "numeric",
+              timeZone: "UTC",
+            })}
+          </time>
+          <span>{post.readMinutes} min read</span>
+        </div>
+      </header>
+      <div className="article-cover">
+        <Image
+          src={post.coverImage}
+          alt={post.title}
+          fill
+          priority
+          sizes="730px"
+        />
+      </div>
+      <div className="article-body">
+        {post.body.split("\n\n").map((paragraph, i) => (
+          <p key={i}>{paragraph}</p>
+        ))}
+        <div className="article-footer">
+          <span className="eyebrow">A LITTLE INSPIRED?</span>
+          <Link className="text-link" href="/plan">
+            Start your next chapter
+            <ArrowUpRight size={16} />
+          </Link>
+        </div>
+      </div>
+    </article>
+  );
 }

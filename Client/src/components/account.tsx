@@ -3,7 +3,24 @@ import Link from "next/link";
 import { useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { format, parseISO } from "date-fns";
-import { ArrowRight, ArrowUpRight, Bookmark, CalendarDays, Check, Compass, FileDown, LoaderCircle, LogOut, MapPin, Pencil, Plus, ShieldCheck, Trash2, Users, X } from "lucide-react";
+import {
+  ArrowRight,
+  ArrowUpRight,
+  Bookmark,
+  CalendarDays,
+  Check,
+  Compass,
+  FileDown,
+  LoaderCircle,
+  LogOut,
+  MapPin,
+  Pencil,
+  Plus,
+  ShieldCheck,
+  Trash2,
+  Users,
+  X,
+} from "lucide-react";
 import { api, json } from "@/lib/api";
 import { money } from "@/lib/catalog";
 import type { Booking, SavedPlan } from "@/lib/types";
@@ -12,35 +29,465 @@ import { Dialog, useApp } from "./providers";
 import { AnimatePresence } from "framer-motion";
 
 export function exportPlan(plan: SavedPlan) {
-  const lines = [plan.title, "A Wanderline itinerary", "", ...plan.planJson.days.flatMap(day => [`DAY ${day.day} — ${day.theme}`, ...day.items.map(item => `${item.time}  ${item.title}\n    ${item.notes}`), ""]), `Estimated budget: ${money(plan.planJson.estimatedBudget.min)}–${money(plan.planJson.estimatedBudget.max)} USD`, ...plan.planJson.tips, "", "Context: ", ...plan.planJson.sources.map(source => `${source.title}: ${source.text}`)];
-  const url = URL.createObjectURL(new Blob([lines.join("\n")], { type: "text/plain;charset=utf-8" }));
-  const a = document.createElement("a"); a.href = url; a.download = `${plan.title.toLowerCase().replace(/[^a-z0-9]+/g, "-")}.txt`; a.click(); URL.revokeObjectURL(url);
+  const lines = [
+    plan.title,
+    "A Wanderline itinerary",
+    "",
+    ...plan.planJson.days.flatMap((day) => [
+      `DAY ${day.day} — ${day.theme}`,
+      ...day.items.map(
+        (item) => `${item.time}  ${item.title}\n    ${item.notes}`,
+      ),
+      "",
+    ]),
+    `Estimated budget: ${money(plan.planJson.estimatedBudget.min)}–${money(plan.planJson.estimatedBudget.max)} USD`,
+    ...plan.planJson.tips,
+    "",
+    "Context: ",
+    ...plan.planJson.sources.map((source) => `${source.title}: ${source.text}`),
+  ];
+  const url = URL.createObjectURL(
+    new Blob([lines.join("\n")], { type: "text/plain;charset=utf-8" }),
+  );
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = `${plan.title.toLowerCase().replace(/[^a-z0-9]+/g, "-")}.txt`;
+  a.click();
+  URL.revokeObjectURL(url);
 }
 
 export function Account() {
-  const { user, authLoading, openAuth, logout, toast } = useApp(); const client = useQueryClient();
-  const [tab, setTab] = useState("Saved plans"); const [selectedPlan, setSelectedPlan] = useState<SavedPlan | null>(null);
-  const [confirm, setConfirm] = useState<{ kind: "plan" | "booking"; id: string; title: string } | null>(null); const [busy, setBusy] = useState(false);
-  const [renaming, setRenaming] = useState(""); const [name, setName] = useState("");
-  const plans = useQuery({ queryKey: ["plans", user?.id], queryFn: () => api<SavedPlan[]>("plans"), enabled: !!user, retry: 1 });
-  const bookings = useQuery({ queryKey: ["bookings", user?.id], queryFn: () => api<Booking[]>("bookings"), enabled: !!user, retry: 1 });
+  const { user, authLoading, openAuth, logout, toast } = useApp();
+  const client = useQueryClient();
+  const [tab, setTab] = useState("Saved plans");
+  const [selectedPlan, setSelectedPlan] = useState<SavedPlan | null>(null);
+  const [confirm, setConfirm] = useState<{
+    kind: "plan" | "booking";
+    id: string;
+    title: string;
+  } | null>(null);
+  const [busy, setBusy] = useState(false);
+  const [renaming, setRenaming] = useState("");
+  const [name, setName] = useState("");
+  const plans = useQuery({
+    queryKey: ["plans", user?.id],
+    queryFn: () => api<SavedPlan[]>("plans"),
+    enabled: !!user,
+    retry: 1,
+  });
+  const bookings = useQuery({
+    queryKey: ["bookings", user?.id],
+    queryFn: () => api<Booking[]>("bookings"),
+    enabled: !!user,
+    retry: 1,
+  });
   const perform = async () => {
-    if (!confirm) return; setBusy(true);
+    if (!confirm) return;
+    setBusy(true);
     try {
-      await api(confirm.kind === "plan" ? `plans/${confirm.id}` : `bookings/${confirm.id}`, json(confirm.kind === "plan" ? "DELETE" : "PATCH", confirm.kind === "booking" ? { status: "CANCELLED" } : undefined));
-      await client.invalidateQueries({ queryKey: [confirm.kind === "plan" ? "plans" : "bookings"] }); toast(confirm.kind === "plan" ? "Plan removed from your collection." : "Your inquiry has been cancelled."); setConfirm(null);
-    } catch (error) { toast((error as Error).message); } finally { setBusy(false); }
+      await api(
+        confirm.kind === "plan"
+          ? `plans/${confirm.id}`
+          : `bookings/${confirm.id}`,
+        json(
+          confirm.kind === "plan" ? "DELETE" : "PATCH",
+          confirm.kind === "booking" ? { status: "CANCELLED" } : undefined,
+        ),
+      );
+      await client.invalidateQueries({
+        queryKey: [confirm.kind === "plan" ? "plans" : "bookings"],
+      });
+      toast(
+        confirm.kind === "plan"
+          ? "Plan removed from your collection."
+          : "Your inquiry has been cancelled.",
+      );
+      setConfirm(null);
+    } catch (error) {
+      toast((error as Error).message);
+    } finally {
+      setBusy(false);
+    }
   };
   const rename = async (id: string) => {
-    if (name.trim().length < 2 || name.length > 160) { toast("Use 2–160 characters for your plan’s name."); return; } setBusy(true);
-    try { await api(`plans/${id}`, json("PATCH", { title: name.trim() })); await client.invalidateQueries({ queryKey: ["plans"] }); setRenaming(""); toast("A new name for your next chapter."); }
-    catch (error) { toast((error as Error).message); } finally { setBusy(false); }
+    if (name.trim().length < 2 || name.length > 160) {
+      toast("Use 2–160 characters for your plan’s name.");
+      return;
+    }
+    setBusy(true);
+    try {
+      await api(`plans/${id}`, json("PATCH", { title: name.trim() }));
+      await client.invalidateQueries({ queryKey: ["plans"] });
+      setRenaming("");
+      toast("A new name for your next chapter.");
+    } catch (error) {
+      toast((error as Error).message);
+    } finally {
+      setBusy(false);
+    }
   };
-  if (authLoading) return <div className="container section"><div className="skeleton" style={{ height: 300 }} aria-label="Loading your journeys" /></div>;
-  if (!user) return <div className="container section"><div className="empty-state"><Compass size={43} /><p className="eyebrow" style={{ justifyContent: "center" }}>A PLACE FOR YOUR POSSIBILITIES</p><h1 style={{ marginTop: 20 }}>Your next chapters,<br /><em>all together.</em></h1><p>Sign in to keep your saved itineraries and booking inquiries in one thoughtful little space.</p><button className="button button-dark" onClick={openAuth}>Sign in to your journeys<ArrowRight size={17} /></button></div></div>;
-  return <div className="container account-page"><div className="page-intro account-intro"><div><p className="eyebrow">YOUR LITTLE CORNER OF THE WORLD</p><h1>Hello, <em>{user.name.split(" ")[0]}.</em></h1><p>Good things ahead. Keep your ideas close and your next chapter closer.</p></div><div className="account-actions">{user.role === "ADMIN" && <Link className="button button-outline button-small" href="/admin"><ShieldCheck size={15} />Admin studio</Link>}<button className="button button-outline button-small" onClick={logout}><LogOut size={15} />Sign out</button></div></div><div className="page-toolbar"><div className="account-tabs">{["Saved plans", "Booking inquiries"].map(value => <button key={value} className={tab === value ? "selected" : ""} onClick={() => setTab(value)}>{value}<span>{value === "Saved plans" ? plans.data?.length || 0 : bookings.data?.length || 0}</span></button>)}</div><Link href="/plan" className="text-link"><Plus size={16} />Dream up a journey</Link></div>
-    {(plans.error || bookings.error) && <p className="error-message" role="alert">{(plans.error || bookings.error)?.message}<button className="text-link" onClick={() => { plans.refetch(); bookings.refetch(); }} style={{ marginLeft: 15 }}>Try again</button></p>}
-    {tab === "Saved plans" ? <div className="account-list">{plans.isPending ? <div className="skeleton" style={{ height: 220 }} /> : plans.data?.length ? plans.data.map(plan => <div className="saved-plan" key={plan.id}><div className="saved-plan-icon"><Bookmark size={23} strokeWidth={1.3} /></div><div className="saved-plan-main"><p className="eyebrow">{plan.inputJson.days} DAYS · {plan.inputJson.travelers} TRAVELERS · {plan.inputJson.destinationSlug.replace(/-/g, " ")}</p>{renaming === plan.id ? <form className="rename-form" onSubmit={e => { e.preventDefault(); rename(plan.id); }}><input aria-label="Plan name" value={name} onChange={e => setName(e.target.value)} maxLength={160} /><button className="icon-button" aria-label="Save name" disabled={busy}><Check size={18} /></button><button className="icon-button" type="button" aria-label="Cancel renaming" onClick={() => setRenaming("")}><X size={18} /></button></form> : <h2>{plan.title}</h2>}<p>{money(plan.planJson.estimatedBudget.min)}–{money(plan.planJson.estimatedBudget.max)} estimated · Saved {format(parseISO(plan.createdAt), "MMM d, yyyy")}</p><div className="saved-plan-actions"><Link href={`/plan?saved=${plan.id}`} className="text-link">Open itinerary<ArrowUpRight size={15} /></Link><button className="text-link" onClick={() => setSelectedPlan(plan)}>Make it happen<ArrowRight size={15} /></button></div></div><div className="saved-plan-tools"><button className="icon-button" aria-label={`Rename ${plan.title}`} onClick={() => { setRenaming(plan.id); setName(plan.title); }}><Pencil size={16} /></button><button className="icon-button" aria-label={`Download ${plan.title}`} onClick={() => exportPlan(plan)}><FileDown size={17} /></button><button className="icon-button" aria-label={`Delete ${plan.title}`} onClick={() => setConfirm({ kind: "plan", id: plan.id, title: plan.title })}><Trash2 size={16} /></button></div></div>) : <div className="empty-state"><Bookmark size={38} /><h2>A little room for possibility.</h2><p>Your saved plans will live here. Let’s create something worth looking forward to.</p><Link href="/plan" className="button button-dark">Create a personal itinerary<ArrowUpRight size={17} /></Link></div>}</div> : <div className="account-list">{bookings.isPending ? <div className="skeleton" style={{ height: 220 }} /> : bookings.data?.length ? bookings.data.map(booking => <div className="inquiry-card" key={booking.id}><div className="inquiry-card-top"><p className="eyebrow">WL-{booking.id.slice(0, 8).toUpperCase()}</p><span className={`status-badge status-${booking.status.toLowerCase()}`}>{booking.status === "INQUIRY" ? "Inquiry received" : booking.status === "CONFIRMED" ? "Confirmed" : "Cancelled"}</span></div><h2>{booking.title}</h2><div className="inquiry-facts"><span><CalendarDays size={15} />{format(parseISO(booking.startDate), "MMM d, yyyy")}</span><span><Users size={15} />{booking.guests} travelers</span><strong>{money(booking.totalEstimate)} estimated total</strong></div>{booking.notes && <p className="inquiry-notes">{booking.notes}</p>}<div className="inquiry-card-bottom"><p>{booking.status === "INQUIRY" ? "Your inquiry is saved. Dates and pricing are subject to confirmation." : booking.status === "CONFIRMED" ? "Your local team has confirmed this inquiry. Refer to your final proposal for arrangements." : "This inquiry has been cancelled. Your next chapter is still out there."}</p>{booking.status !== "CANCELLED" && <button className="text-link danger-link" onClick={() => setConfirm({ kind: "booking", id: booking.id, title: booking.title })}>Cancel inquiry</button>}</div></div>) : <div className="empty-state"><MapPin size={38} /><h2>Something to look forward to.</h2><p>When you find your kind of journey, send an inquiry. You’ll see its progress here.</p><Link href="/trips" className="button button-dark">Explore our journeys<ArrowUpRight size={17} /></Link></div>}</div>}
-    <AnimatePresence>{selectedPlan && <Dialog title="Enquire about your personal journey" onClose={() => setSelectedPlan(null)}><p className="eyebrow">MAKE IT HAPPEN</p><h2>{selectedPlan.title}</h2><p className="muted">A starting point for your personal journey. We’ll confirm the details together.</p><BookingForm planId={selectedPlan.id} price={selectedPlan.planJson.estimatedBudget.min / selectedPlan.inputJson.travelers} initialDate={selectedPlan.inputJson.startDate} initialGuests={selectedPlan.inputJson.travelers} /></Dialog>}{confirm && <Dialog title={confirm.kind === "plan" ? "Remove saved plan" : "Cancel booking inquiry"} onClose={() => { if (!busy) setConfirm(null); }}><p className="eyebrow">A CHANGE OF PLANS</p><h2>{confirm.kind === "plan" ? "Let this one go?" : "Cancel this inquiry?"}</h2><p className="muted">{confirm.title}</p><p className="muted" style={{ marginTop: 15 }}>{confirm.kind === "plan" ? "This removes the itinerary from your saved plans." : "Your inquiry will be marked as cancelled. You can always start a new one."}</p><div className="confirm-actions"><button className="button button-outline" onClick={() => setConfirm(null)} disabled={busy}>Keep it</button><button className="button button-dark" onClick={perform} disabled={busy}>{busy && <LoaderCircle size={16} className="spin" />}{confirm.kind === "plan" ? "Remove plan" : "Cancel inquiry"}</button></div></Dialog>}</AnimatePresence>
-  </div>;
+  if (authLoading)
+    return (
+      <div className="container section">
+        <div
+          className="skeleton"
+          style={{ height: 300 }}
+          aria-label="Loading your journeys"
+        />
+      </div>
+    );
+  if (!user)
+    return (
+      <div className="container section">
+        <div className="empty-state">
+          <Compass size={43} />
+          <p className="eyebrow" style={{ justifyContent: "center" }}>
+            A PLACE FOR YOUR POSSIBILITIES
+          </p>
+          <h1 style={{ marginTop: 20 }}>
+            Your next chapters,
+            <br />
+            <em>all together.</em>
+          </h1>
+          <p>
+            Sign in to keep your saved itineraries and booking inquiries in one
+            thoughtful little space.
+          </p>
+          <button className="button button-dark" onClick={openAuth}>
+            Sign in to your journeys
+            <ArrowRight size={17} />
+          </button>
+        </div>
+      </div>
+    );
+  return (
+    <div className="container account-page">
+      <div className="page-intro account-intro">
+        <div>
+          <p className="eyebrow">YOUR LITTLE CORNER OF THE WORLD</p>
+          <h1>
+            Hello, <em>{user.name.split(" ")[0]}.</em>
+          </h1>
+          <p>
+            Good things ahead. Keep your ideas close and your next chapter
+            closer.
+          </p>
+        </div>
+        <div className="account-actions">
+          {user.role === "ADMIN" && (
+            <Link className="button button-outline button-small" href="/admin">
+              <ShieldCheck size={15} />
+              Admin studio
+            </Link>
+          )}
+          <button
+            className="button button-outline button-small"
+            onClick={logout}
+          >
+            <LogOut size={15} />
+            Sign out
+          </button>
+        </div>
+      </div>
+      <div className="page-toolbar">
+        <div className="account-tabs">
+          {["Saved plans", "Booking inquiries"].map((value) => (
+            <button
+              key={value}
+              className={tab === value ? "selected" : ""}
+              onClick={() => setTab(value)}
+            >
+              {value}
+              <span>
+                {value === "Saved plans"
+                  ? plans.data?.length || 0
+                  : bookings.data?.length || 0}
+              </span>
+            </button>
+          ))}
+        </div>
+        <Link href="/plan" className="text-link">
+          <Plus size={16} />
+          Dream up a journey
+        </Link>
+      </div>
+      {(plans.error || bookings.error) && (
+        <p className="error-message" role="alert">
+          {(plans.error || bookings.error)?.message}
+          <button
+            className="text-link"
+            onClick={() => {
+              plans.refetch();
+              bookings.refetch();
+            }}
+            style={{ marginLeft: 15 }}
+          >
+            Try again
+          </button>
+        </p>
+      )}
+      {tab === "Saved plans" ? (
+        <div className="account-list">
+          {plans.isPending ? (
+            <div className="skeleton" style={{ height: 220 }} />
+          ) : plans.data?.length ? (
+            plans.data.map((plan) => (
+              <div className="saved-plan" key={plan.id}>
+                <div className="saved-plan-icon">
+                  <Bookmark size={23} strokeWidth={1.3} />
+                </div>
+                <div className="saved-plan-main">
+                  <p className="eyebrow">
+                    {plan.inputJson.days} DAYS · {plan.inputJson.travelers}{" "}
+                    TRAVELERS ·{" "}
+                    {plan.inputJson.destinationSlug.replace(/-/g, " ")}
+                  </p>
+                  {renaming === plan.id ? (
+                    <form
+                      className="rename-form"
+                      onSubmit={(e) => {
+                        e.preventDefault();
+                        rename(plan.id);
+                      }}
+                    >
+                      <input
+                        aria-label="Plan name"
+                        value={name}
+                        onChange={(e) => setName(e.target.value)}
+                        maxLength={160}
+                      />
+                      <button
+                        className="icon-button"
+                        aria-label="Save name"
+                        disabled={busy}
+                      >
+                        <Check size={18} />
+                      </button>
+                      <button
+                        className="icon-button"
+                        type="button"
+                        aria-label="Cancel renaming"
+                        onClick={() => setRenaming("")}
+                      >
+                        <X size={18} />
+                      </button>
+                    </form>
+                  ) : (
+                    <h2>{plan.title}</h2>
+                  )}
+                  <p>
+                    {money(plan.planJson.estimatedBudget.min)}–
+                    {money(plan.planJson.estimatedBudget.max)} estimated · Saved{" "}
+                    {format(parseISO(plan.createdAt), "MMM d, yyyy")}
+                  </p>
+                  <div className="saved-plan-actions">
+                    <Link href={`/plan?saved=${plan.id}`} className="text-link">
+                      Open itinerary
+                      <ArrowUpRight size={15} />
+                    </Link>
+                    <button
+                      className="text-link"
+                      onClick={() => setSelectedPlan(plan)}
+                    >
+                      Make it happen
+                      <ArrowRight size={15} />
+                    </button>
+                  </div>
+                </div>
+                <div className="saved-plan-tools">
+                  <button
+                    className="icon-button"
+                    aria-label={`Rename ${plan.title}`}
+                    onClick={() => {
+                      setRenaming(plan.id);
+                      setName(plan.title);
+                    }}
+                  >
+                    <Pencil size={16} />
+                  </button>
+                  <button
+                    className="icon-button"
+                    aria-label={`Download ${plan.title}`}
+                    onClick={() => exportPlan(plan)}
+                  >
+                    <FileDown size={17} />
+                  </button>
+                  <button
+                    className="icon-button"
+                    aria-label={`Delete ${plan.title}`}
+                    onClick={() =>
+                      setConfirm({
+                        kind: "plan",
+                        id: plan.id,
+                        title: plan.title,
+                      })
+                    }
+                  >
+                    <Trash2 size={16} />
+                  </button>
+                </div>
+              </div>
+            ))
+          ) : (
+            <div className="empty-state">
+              <Bookmark size={38} />
+              <h2>A little room for possibility.</h2>
+              <p>
+                Your saved plans will live here. Let’s create something worth
+                looking forward to.
+              </p>
+              <Link href="/plan" className="button button-dark">
+                Create a personal itinerary
+                <ArrowUpRight size={17} />
+              </Link>
+            </div>
+          )}
+        </div>
+      ) : (
+        <div className="account-list">
+          {bookings.isPending ? (
+            <div className="skeleton" style={{ height: 220 }} />
+          ) : bookings.data?.length ? (
+            bookings.data.map((booking) => (
+              <div className="inquiry-card" key={booking.id}>
+                <div className="inquiry-card-top">
+                  <p className="eyebrow">
+                    WL-{booking.id.slice(0, 8).toUpperCase()}
+                  </p>
+                  <span
+                    className={`status-badge status-${booking.status.toLowerCase()}`}
+                  >
+                    {booking.status === "INQUIRY"
+                      ? "Inquiry received"
+                      : booking.status === "CONFIRMED"
+                        ? "Confirmed"
+                        : "Cancelled"}
+                  </span>
+                </div>
+                <h2>{booking.title}</h2>
+                <div className="inquiry-facts">
+                  <span>
+                    <CalendarDays size={15} />
+                    {format(parseISO(booking.startDate), "MMM d, yyyy")}
+                  </span>
+                  <span>
+                    <Users size={15} />
+                    {booking.guests} travelers
+                  </span>
+                  <strong>
+                    {money(booking.totalEstimate)} estimated total
+                  </strong>
+                </div>
+                {booking.notes && (
+                  <p className="inquiry-notes">{booking.notes}</p>
+                )}
+                <div className="inquiry-card-bottom">
+                  <p>
+                    {booking.status === "INQUIRY"
+                      ? "Your inquiry is saved. Dates and pricing are subject to confirmation."
+                      : booking.status === "CONFIRMED"
+                        ? "Your local team has confirmed this inquiry. Refer to your final proposal for arrangements."
+                        : "This inquiry has been cancelled. Your next chapter is still out there."}
+                  </p>
+                  {booking.status !== "CANCELLED" && (
+                    <button
+                      className="text-link danger-link"
+                      onClick={() =>
+                        setConfirm({
+                          kind: "booking",
+                          id: booking.id,
+                          title: booking.title,
+                        })
+                      }
+                    >
+                      Cancel inquiry
+                    </button>
+                  )}
+                </div>
+              </div>
+            ))
+          ) : (
+            <div className="empty-state">
+              <MapPin size={38} />
+              <h2>Something to look forward to.</h2>
+              <p>
+                When you find your kind of journey, send an inquiry. You’ll see
+                its progress here.
+              </p>
+              <Link href="/trips" className="button button-dark">
+                Explore our journeys
+                <ArrowUpRight size={17} />
+              </Link>
+            </div>
+          )}
+        </div>
+      )}
+      <AnimatePresence>
+        {selectedPlan && (
+          <Dialog
+            title="Enquire about your personal journey"
+            onClose={() => setSelectedPlan(null)}
+          >
+            <p className="eyebrow">MAKE IT HAPPEN</p>
+            <h2>{selectedPlan.title}</h2>
+            <p className="muted">
+              A starting point for your personal journey. We’ll confirm the
+              details together.
+            </p>
+            <BookingForm
+              planId={selectedPlan.id}
+              price={
+                selectedPlan.planJson.estimatedBudget.min /
+                selectedPlan.inputJson.travelers
+              }
+              initialDate={selectedPlan.inputJson.startDate}
+              initialGuests={selectedPlan.inputJson.travelers}
+            />
+          </Dialog>
+        )}
+        {confirm && (
+          <Dialog
+            title={
+              confirm.kind === "plan"
+                ? "Remove saved plan"
+                : "Cancel booking inquiry"
+            }
+            onClose={() => {
+              if (!busy) setConfirm(null);
+            }}
+          >
+            <p className="eyebrow">A CHANGE OF PLANS</p>
+            <h2>
+              {confirm.kind === "plan"
+                ? "Let this one go?"
+                : "Cancel this inquiry?"}
+            </h2>
+            <p className="muted">{confirm.title}</p>
+            <p className="muted" style={{ marginTop: 15 }}>
+              {confirm.kind === "plan"
+                ? "This removes the itinerary from your saved plans."
+                : "Your inquiry will be marked as cancelled. You can always start a new one."}
+            </p>
+            <div className="confirm-actions">
+              <button
+                className="button button-outline"
+                onClick={() => setConfirm(null)}
+                disabled={busy}
+              >
+                Keep it
+              </button>
+              <button
+                className="button button-dark"
+                onClick={perform}
+                disabled={busy}
+              >
+                {busy && <LoaderCircle size={16} className="spin" />}
+                {confirm.kind === "plan" ? "Remove plan" : "Cancel inquiry"}
+              </button>
+            </div>
+          </Dialog>
+        )}
+      </AnimatePresence>
+    </div>
+  );
 }

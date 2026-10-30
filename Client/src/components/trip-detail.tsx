@@ -8,7 +8,120 @@ import { MapView } from "./map/map-view";
 import { useCatalog } from "./providers";
 import { BookingForm } from "./booking-form";
 
-export function TripDetail({ trip, destination }: { trip: Trip; destination: Destination }) {
-  const { data } = useCatalog(); const params = useSearchParams(); const experience = data.experiences.find(e => e.slug === params.get("experience"));
-  return <><DetailHero image={trip.heroImage} title={trip.title} subtitle={`${trip.days} days of a different kind of travel. Small groups, local connections, and room to make it yours.`} eyebrow={`${destination.name}, ${destination.country} · ${trip.label}`} backHref="/trips" backLabel="Our journeys" /><div className="container detail-layout"><div className="detail-copy"><p className="eyebrow">A JOURNEY THAT STAYS WITH YOU</p><h2>Take the good way.</h2><p>{destination.description}</p><div className="detail-facts"><div><CalendarDays size={22} /><small>TAKE YOUR TIME</small><strong>{trip.days} days · {trip.days - 1} nights</strong></div><div><Users size={22} /><small>GOOD COMPANY</small><strong>1–12 travelers</strong></div><div><Compass size={22} /><small>BEST TIME TO GO</small><strong>{destination.bestSeason}</strong></div></div><section className="detail-block"><p className="eyebrow">A STARTING POINT. NEVER A SCRIPT.</p><h2>The days ahead.</h2><div className="timeline">{trip.itineraryJson.map(day => <Accordion key={day.day} number={day.day} title={day.theme} defaultOpen={day.day === 1}><p>{day.description}</p></Accordion>)}</div></section><section className="detail-block"><h2>A few things, taken care of.</h2><ul className="included-list">{[`${trip.days - 1} nights in thoughtfully chosen, locally hosted stays`, "Daily breakfast and meals noted in your confirmed itinerary", "Local guiding and scheduled destination transfers", "A local point of contact throughout your journey"].map(item => <li key={item}><Check size={17} />{item}</li>)}</ul><p>International flights, travel insurance, visa fees, and optional activities are additional. Accommodation, inclusions, and availability are confirmed with your final proposal.</p></section><section className="detail-block"><h2>Get your bearings.</h2><MapView points={data.pois.filter(p => p.destinationId === destination.id)} route /><p className="map-disclaimer">Lines connect highlights for orientation; they are not turn-by-turn travel routes.</p></section></div><aside className="booking-card"><p className="eyebrow">YOUR NEXT CHAPTER</p><p className="booking-price">{money(trip.priceFrom)} <small>/ person, from</small></p><p>{trip.days} days · Locally connected · Thoughtfully curated</p><BookingForm packageId={trip.id} price={Number(trip.priceFrom)} initialNotes={experience ? `I’d love to include “${experience.title}” in this journey.` : ""} /></aside></div></>;
+export function TripDetail({
+  trip,
+  destination,
+}: {
+  trip: Trip;
+  destination: Destination;
+}) {
+  const { data } = useCatalog();
+  const params = useSearchParams();
+  const experience = data.experiences.find(
+    (e) => e.slug === params.get("experience"),
+  );
+  return (
+    <>
+      <DetailHero
+        image={trip.heroImage}
+        title={trip.title}
+        subtitle={`${trip.days} days of a different kind of travel. Small groups, local connections, and room to make it yours.`}
+        eyebrow={`${destination.name}, ${destination.country} · ${trip.label}`}
+        backHref="/trips"
+        backLabel="Our journeys"
+      />
+      <div className="container detail-layout">
+        <div className="detail-copy">
+          <p className="eyebrow">A JOURNEY THAT STAYS WITH YOU</p>
+          <h2>Take the good way.</h2>
+          <p>{destination.description}</p>
+          <div className="detail-facts">
+            <div>
+              <CalendarDays size={22} />
+              <small>TAKE YOUR TIME</small>
+              <strong>
+                {trip.days} days · {trip.days - 1} nights
+              </strong>
+            </div>
+            <div>
+              <Users size={22} />
+              <small>GOOD COMPANY</small>
+              <strong>1–12 travelers</strong>
+            </div>
+            <div>
+              <Compass size={22} />
+              <small>BEST TIME TO GO</small>
+              <strong>{destination.bestSeason}</strong>
+            </div>
+          </div>
+          <section className="detail-block">
+            <p className="eyebrow">A STARTING POINT. NEVER A SCRIPT.</p>
+            <h2>The days ahead.</h2>
+            <div className="timeline">
+              {trip.itineraryJson.map((day) => (
+                <Accordion
+                  key={day.day}
+                  number={day.day}
+                  title={day.theme}
+                  defaultOpen={day.day === 1}
+                >
+                  <p>{day.description}</p>
+                </Accordion>
+              ))}
+            </div>
+          </section>
+          <section className="detail-block">
+            <h2>A few things, taken care of.</h2>
+            <ul className="included-list">
+              {[
+                `${trip.days - 1} nights in thoughtfully chosen, locally hosted stays`,
+                "Daily breakfast and meals noted in your confirmed itinerary",
+                "Local guiding and scheduled destination transfers",
+                "A local point of contact throughout your journey",
+              ].map((item) => (
+                <li key={item}>
+                  <Check size={17} />
+                  {item}
+                </li>
+              ))}
+            </ul>
+            <p>
+              International flights, travel insurance, visa fees, and optional
+              activities are additional. Accommodation, inclusions, and
+              availability are confirmed with your final proposal.
+            </p>
+          </section>
+          <section className="detail-block">
+            <h2>Get your bearings.</h2>
+            <MapView
+              points={data.pois.filter(
+                (p) => p.destinationId === destination.id,
+              )}
+              route
+            />
+            <p className="map-disclaimer">
+              Lines connect highlights for orientation; they are not
+              turn-by-turn travel routes.
+            </p>
+          </section>
+        </div>
+        <aside className="booking-card">
+          <p className="eyebrow">YOUR NEXT CHAPTER</p>
+          <p className="booking-price">
+            {money(trip.priceFrom)} <small>/ person, from</small>
+          </p>
+          <p>{trip.days} days · Locally connected · Thoughtfully curated</p>
+          <BookingForm
+            packageId={trip.id}
+            price={Number(trip.priceFrom)}
+            initialNotes={
+              experience
+                ? `I’d love to include “${experience.title}” in this journey.`
+                : ""
+            }
+          />
+        </aside>
+      </div>
+    </>
+  );
 }
