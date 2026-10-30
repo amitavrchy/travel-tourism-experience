@@ -1,11 +1,127 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
+}
+
+enum Role {
+  TRAVELER
+  ADMIN
+}
+
+enum BookingStatus {
+  INQUIRY
+  CONFIRMED
+  CANCELLED
+}
+
+model User {
+  id           String @id @default(cuid())
+  email        String @unique
+  passwordHash String
+  name         String
+  role         Role @default(TRAVELER)
+  bookings     Booking[]
+  plans        TripPlan[]
+}
+
+model Destination {
+  id            String @id @default(cuid())
+  slug          String @unique
+  name          String
+  country       String
+  region        String
+  tagline       String
+  description   String
+  heroImage     String
+  lat           Float
+  lng           Float
+  bestMonths    Int[]
+  tags          String[]
+  embedText     String
+  color         String
+  startingPrice Float
+  reading       String
+  bestSeason    String
+  timezone      String
+  pois          Poi[]
+  experiences   Experience[]
+  packages      TripPackage[]
+}
+
+model Poi {
+  id            String @id @default(cuid())
+  destinationId String
+  destination   Destination @relation(fields: [destinationId], references: [id], onDelete: Cascade)
+  name          String
+  kind          String
+  description   String
+  lat           Float
+  lng           Float
+}
+
+model Experience {
+  id            String @id @default(cuid())
+  destinationId String
+  destination   Destination @relation(fields: [destinationId], references: [id], onDelete: Cascade)
+  slug          String @unique
+  title         String
+  summary       String
+  durationHours Float
+  priceFrom     Decimal @db.Decimal(10, 2)
+  difficulty    String
+  imageUrl      String
+}
+
+model TripPackage {
+  id            String @id @default(cuid())
+  destinationId String
+  destination   Destination @relation(fields: [destinationId], references: [id], onDelete: Cascade)
+  slug          String @unique
+  title         String
+  days          Int
+  priceFrom     Decimal @db.Decimal(10, 2)
+  itineraryJson Json
+  heroImage     String
+  label         String
+  bookings      Booking[]
+}
+
+model TripPlan {
+  id        String @id @default(cuid())
+  userId    String
+  user      User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title     String
+  inputJson Json
+  planJson  Json
+  createdAt DateTime @default(now())
+}
+
+model Booking {
+  id            String @id @default(cuid())
+  userId        String
+  user          User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  packageId     String?
+  package       TripPackage? @relation(fields: [packageId], references: [id], onDelete: SetNull)
+  planId        String?
+  title         String
+  email         String
+  startDate     DateTime @db.Date
+  guests        Int
+  status        BookingStatus @default(INQUIRY)
+  notes         String?
+  totalEstimate Decimal @db.Decimal(10, 2)
+  createdAt     DateTime @default(now())
+}
+
+model JournalPost {
+  id          String @id @default(cuid())
+  slug        String @unique
+  title       String
+  excerpt     String
+  category    String
+  body        String
+  coverImage  String
+  readMinutes Int
+  publishedAt DateTime
 }
 
 datasource db {

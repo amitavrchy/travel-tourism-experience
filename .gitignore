@@ -9,3 +9,8 @@ out/
 __pycache__/
 *.log
 .DS_Store
+.data/
+ai/.chroma/
+*.tsbuildinfo
+test-results/
+playwright-report/

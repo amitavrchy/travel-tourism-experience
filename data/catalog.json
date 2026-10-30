@@ -1,0 +1,694 @@
+{
+  "destinations": [
+    {
+      "id": "bali",
+      "slug": "bali",
+      "name": "Bali",
+      "country": "Indonesia",
+      "region": "Asia",
+      "tagline": "A little closer to paradise.",
+      "description": "Beyond the familiar coastline, Bali moves to its own rhythm. Follow the morning mist through rice terraces, share a meal in a family compound, and find a quieter kind of beautiful along the island’s eastern shore.",
+      "heroImage": "/images/bali.jpg",
+      "lat": -8.5069,
+      "lng": 115.2625,
+      "bestMonths": [
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+      ],
+      "tags": [
+        "Nature",
+        "Wellness",
+        "Culture"
+      ],
+      "embedText": "Ubud is a base for rice terraces and Balinese art. Tegallalang terraces are north of Ubud. Campuhan Ridge is an easy sunrise walk. Tirta Empul is a sacred water temple with dress requirements. Dry season is generally April to October. Allow road transfer buffers; traffic is slow. Ask before photographing ceremonies.",
+      "color": "#81977b",
+      "startingPrice": 890,
+      "reading": "The island of a thousand beginnings",
+      "bestSeason": "April – October",
+      "timezone": "Asia/Makassar"
+    },
+    {
+      "id": "kyoto",
+      "slug": "kyoto",
+      "name": "Kyoto",
+      "country": "Japan",
+      "region": "Asia",
+      "tagline": "Find beauty in the in-between.",
+      "description": "A lantern-lit lane. The quiet of a moss garden. Tea poured with intention. Kyoto rewards the traveler who slows down, following the seasons from hillside shrines to its small neighborhood kitchens.",
+      "heroImage": "/images/kyoto.jpg",
+      "lat": 35.0116,
+      "lng": 135.7681,
+      "bestMonths": [
+        3,
+        4,
+        5,
+        10,
+        11
+      ],
+      "tags": [
+        "Culture",
+        "Food",
+        "Slow travel"
+      ],
+      "embedText": "Fushimi Inari is a shrine with torii gates; visit early and respect worshippers. Arashiyama bamboo grove is in western Kyoto. Nishiki Market offers food stalls; eat at designated areas. Spring and autumn are popular. Use public transport and allow cross-city travel time. Do not enter private lanes in Gion.",
+      "color": "#b68075",
+      "startingPrice": 1450,
+      "reading": "A thousand quiet moments",
+      "bestSeason": "March – May · October – November",
+      "timezone": "Asia/Tokyo"
+    },
+    {
+      "id": "amalfi",
+      "slug": "amalfi-coast",
+      "name": "Amalfi Coast",
+      "country": "Italy",
+      "region": "Europe",
+      "tagline": "Take the scenic way home.",
+      "description": "Lemon groves spill down to a blue that hardly seems real. Between cliffside villages and long lunches, discover a coast best enjoyed at the speed of an afternoon espresso.",
+      "heroImage": "/images/amalfi.jpg",
+      "lat": 40.634,
+      "lng": 14.6027,
+      "bestMonths": [
+        4,
+        5,
+        6,
+        9,
+        10
+      ],
+      "tags": [
+        "Coast",
+        "Food",
+        "Romance"
+      ],
+      "embedText": "Positano is a steep hillside coastal town. Ravello has gardens and views; verify Villa Rufolo tickets. Path of the Gods starts near Bomerano and is exposed and uneven; avoid heat and check trail conditions. Ferries are seasonal and weather dependent. May, June, September and October are generally pleasant.",
+      "color": "#8ea8ac",
+      "startingPrice": 1690,
+      "reading": "The art of doing very little",
+      "bestSeason": "April – June · September – October",
+      "timezone": "Europe/Rome"
+    },
+    {
+      "id": "ella",
+      "slug": "sri-lanka",
+      "name": "Sri Lanka",
+      "country": "Sri Lanka",
+      "region": "Asia",
+      "tagline": "Wild at heart. Warm by nature.",
+      "description": "Take the slow train into tea country, watch the hills turn gold, and make time for a conversation over a cup of freshly brewed Ceylon tea. A small island with an extraordinary sense of possibility.",
+      "heroImage": "/images/srilanka.jpg",
+      "lat": 6.8667,
+      "lng": 81.0466,
+      "bestMonths": [
+        1,
+        2,
+        3,
+        4,
+        7,
+        8
+      ],
+      "tags": [
+        "Adventure",
+        "Nature",
+        "Slow travel"
+      ],
+      "embedText": "Ella is a hill-country base. Nine Arch Bridge is an active railway bridge; observe from safe public viewpoints and stay off tracks. Little Adams Peak is a hill walk with stairs. Ravana Falls is a roadside waterfall; avoid unsafe swimming. Hill weather varies. Reserve rail seats ahead and verify train schedules.",
+      "color": "#71876c",
+      "startingPrice": 690,
+      "reading": "Let the island surprise you",
+      "bestSeason": "January – April · July – August",
+      "timezone": "Asia/Colombo"
+    },
+    {
+      "id": "algarve",
+      "slug": "algarve",
+      "name": "The Algarve",
+      "country": "Portugal",
+      "region": "Europe",
+      "tagline": "Stay a little longer.",
+      "description": "Sea-carved cliffs, salt in the air, and fishing villages with nothing to prove. Find your own stretch of Atlantic coast, from a morning walk to a table set with the day’s catch.",
+      "heroImage": "/images/algarve.jpg",
+      "lat": 37.1028,
+      "lng": -8.673,
+      "bestMonths": [
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+      ],
+      "tags": [
+        "Coast",
+        "Adventure",
+        "Slow travel"
+      ],
+      "embedText": "Ponta da Piedade has coastal viewpoints near Lagos; remain on marked paths. Praia Dona Ana is a beach below cliffs; observe tides and cliff warnings. Lagos old town has walkable streets and local restaurants. Ocean activities depend on wind and sea conditions. Cave access may be restricted; verify with local operators.",
+      "color": "#c2a579",
+      "startingPrice": 1090,
+      "reading": "An Atlantic state of mind",
+      "bestSeason": "April – October",
+      "timezone": "Europe/Lisbon"
+    },
+    {
+      "id": "iceland",
+      "slug": "iceland",
+      "name": "Iceland",
+      "country": "Iceland",
+      "region": "Europe",
+      "tagline": "Go where you feel small.",
+      "description": "Waterfalls tumble from ancient cliffs. Black sand meets the North Atlantic. Out here, the landscape writes the itinerary—and every turn reminds you how much of the world is still wonderfully wild.",
+      "heroImage": "/images/iceland.jpg",
+      "lat": 63.5321,
+      "lng": -19.5114,
+      "bestMonths": [
+        6,
+        7,
+        8,
+        9
+      ],
+      "tags": [
+        "Adventure",
+        "Nature",
+        "Road trip"
+      ],
+      "embedText": "Skogafoss is a waterfall near the Ring Road. Seljalandsfoss access behind the waterfall can close due to ice. Reynisfjara is a black sand beach with dangerous sneaker waves; stay well back and follow warning lights. June to September generally allows easier driving. Check road.is and vedur.is before travel.",
+      "color": "#738d91",
+      "startingPrice": 1890,
+      "reading": "A world of its own",
+      "bestSeason": "June – September",
+      "timezone": "Atlantic/Reykjavik"
+    }
+  ],
+  "pois": [
+    {
+      "id": "bali-p1",
+      "destinationId": "bali",
+      "name": "Tegallalang Rice Terraces",
+      "kind": "Nature",
+      "lat": -8.434,
+      "lng": 115.279,
+      "description": "Walk the terraced hills with a local guide. Ask permission before entering working fields."
+    },
+    {
+      "id": "bali-p2",
+      "destinationId": "bali",
+      "name": "Campuhan Ridge",
+      "kind": "Hike",
+      "lat": -8.499,
+      "lng": 115.253,
+      "description": "An easy ridge walk, best enjoyed in the cooler early morning."
+    },
+    {
+      "id": "bali-p3",
+      "destinationId": "bali",
+      "name": "Tirta Empul Temple",
+      "kind": "Culture",
+      "lat": -8.415,
+      "lng": 115.316,
+      "description": "A sacred water temple. Wear appropriate clothing and follow local guidance."
+    },
+    {
+      "id": "kyoto-p1",
+      "destinationId": "kyoto",
+      "name": "Fushimi Inari Shrine",
+      "kind": "Culture",
+      "lat": 34.9671,
+      "lng": 135.7727,
+      "description": "Follow the torii-lined paths, respecting worshippers and photography signs."
+    },
+    {
+      "id": "kyoto-p2",
+      "destinationId": "kyoto",
+      "name": "Arashiyama Bamboo Grove",
+      "kind": "Nature",
+      "lat": 35.0094,
+      "lng": 135.6668,
+      "description": "A bamboo-lined path in western Kyoto. Visit early for a quieter experience."
+    },
+    {
+      "id": "kyoto-p3",
+      "destinationId": "kyoto",
+      "name": "Nishiki Market",
+      "kind": "Food",
+      "lat": 35.005,
+      "lng": 135.7649,
+      "description": "Explore Kyoto’s pantry and eat at the designated stalls."
+    },
+    {
+      "id": "amalfi-p1",
+      "destinationId": "amalfi",
+      "name": "Positano",
+      "kind": "Coast",
+      "lat": 40.6281,
+      "lng": 14.4845,
+      "description": "Explore winding lanes and seaside viewpoints. Expect plenty of stairs."
+    },
+    {
+      "id": "amalfi-p2",
+      "destinationId": "amalfi",
+      "name": "Ravello",
+      "kind": "Culture",
+      "lat": 40.6493,
+      "lng": 14.6117,
+      "description": "A hilltop village of gardens and far-reaching coastal views."
+    },
+    {
+      "id": "amalfi-p3",
+      "destinationId": "amalfi",
+      "name": "Path of the Gods",
+      "kind": "Hike",
+      "lat": 40.6296,
+      "lng": 14.5395,
+      "description": "An exposed coastal trail from Bomerano. Check conditions and carry water."
+    },
+    {
+      "id": "ella-p1",
+      "destinationId": "ella",
+      "name": "Nine Arch Bridge viewpoint",
+      "kind": "Culture",
+      "lat": 6.8769,
+      "lng": 81.0608,
+      "description": "Enjoy the bridge from safe public viewpoints. Stay off active tracks."
+    },
+    {
+      "id": "ella-p2",
+      "destinationId": "ella",
+      "name": "Little Adam’s Peak",
+      "kind": "Hike",
+      "lat": 6.8652,
+      "lng": 81.063,
+      "description": "A hill walk through tea country with stairs and wide views."
+    },
+    {
+      "id": "ella-p3",
+      "destinationId": "ella",
+      "name": "Ravana Falls",
+      "kind": "Nature",
+      "lat": 6.8409,
+      "lng": 81.0545,
+      "description": "Use the viewing area and follow safety signs. Avoid unsafe swimming."
+    },
+    {
+      "id": "algarve-p1",
+      "destinationId": "algarve",
+      "name": "Ponta da Piedade",
+      "kind": "Nature",
+      "lat": 37.0813,
+      "lng": -8.6693,
+      "description": "Follow marked boardwalks above sculpted sandstone cliffs."
+    },
+    {
+      "id": "algarve-p2",
+      "destinationId": "algarve",
+      "name": "Praia Dona Ana",
+      "kind": "Coast",
+      "lat": 37.0911,
+      "lng": -8.6699,
+      "description": "A beach below tall cliffs. Check tides and cliff warnings."
+    },
+    {
+      "id": "algarve-p3",
+      "destinationId": "algarve",
+      "name": "Lagos Old Town",
+      "kind": "Food",
+      "lat": 37.1018,
+      "lng": -8.6742,
+      "description": "Whitewashed lanes, tiled facades, and small seafood restaurants."
+    },
+    {
+      "id": "iceland-p1",
+      "destinationId": "iceland",
+      "name": "Skógafoss",
+      "kind": "Nature",
+      "lat": 63.5321,
+      "lng": -19.5114,
+      "description": "A powerful waterfall with a marked viewing area and steps."
+    },
+    {
+      "id": "iceland-p2",
+      "destinationId": "iceland",
+      "name": "Seljalandsfoss",
+      "kind": "Nature",
+      "lat": 63.6156,
+      "lng": -19.9886,
+      "description": "Seasonal footpath access. Check ice closures."
+    },
+    {
+      "id": "iceland-p3",
+      "destinationId": "iceland",
+      "name": "Reynisfjara",
+      "kind": "Coast",
+      "lat": 63.4044,
+      "lng": -19.0446,
+      "description": "A black-sand beach. Stay well away from the water and obey wave warnings."
+    }
+  ],
+  "experiences": [
+    {
+      "id": "bali-e1",
+      "destinationId": "bali",
+      "slug": "ubud-rice-and-roots",
+      "title": "Rice fields & Balinese roots",
+      "summary": "A morning walk with a local host and a hands-on introduction to Balinese cooking.",
+      "durationHours": 4,
+      "priceFrom": 65,
+      "difficulty": "Easy",
+      "imageUrl": "/images/bali.jpg"
+    },
+    {
+      "id": "kyoto-e1",
+      "destinationId": "kyoto",
+      "slug": "kyoto-tea-and-tradition",
+      "title": "The quiet art of tea",
+      "summary": "Discover the rituals behind a cup of matcha in an intimate, host-led tea session.",
+      "durationHours": 2,
+      "priceFrom": 85,
+      "difficulty": "Easy",
+      "imageUrl": "/images/kyoto.jpg"
+    },
+    {
+      "id": "amalfi-e1",
+      "destinationId": "amalfi",
+      "slug": "amalfi-lemon-table",
+      "title": "At the lemon farmer’s table",
+      "summary": "Wander a family lemon grove and prepare a seasonal lunch overlooking the sea.",
+      "durationHours": 3.5,
+      "priceFrom": 110,
+      "difficulty": "Easy",
+      "imageUrl": "/images/amalfi.jpg"
+    },
+    {
+      "id": "ella-e1",
+      "destinationId": "ella",
+      "slug": "ella-tea-trails",
+      "title": "Tea trails & hilltop stories",
+      "summary": "Walk through tea country with a local guide and discover the island’s tea traditions.",
+      "durationHours": 4,
+      "priceFrom": 45,
+      "difficulty": "Moderate",
+      "imageUrl": "/images/srilanka.jpg"
+    },
+    {
+      "id": "algarve-e1",
+      "destinationId": "algarve",
+      "slug": "algarve-coastal-walk",
+      "title": "Along the Atlantic edge",
+      "summary": "A guided walk on marked coastal trails with a picnic of local flavors.",
+      "durationHours": 3,
+      "priceFrom": 55,
+      "difficulty": "Moderate",
+      "imageUrl": "/images/algarve.jpg"
+    },
+    {
+      "id": "iceland-e1",
+      "destinationId": "iceland",
+      "slug": "iceland-waterfall-trail",
+      "title": "Chasing waterfalls",
+      "summary": "Explore the south coast with a driver-guide, with time to linger at each stop.",
+      "durationHours": 8,
+      "priceFrom": 195,
+      "difficulty": "Moderate",
+      "imageUrl": "/images/iceland.jpg"
+    }
+  ],
+  "packages": [
+    {
+      "id": "bali-t1",
+      "destinationId": "bali",
+      "slug": "bali-beyond-the-ordinary",
+      "title": "Bali, beyond the ordinary",
+      "days": 7,
+      "priceFrom": 890,
+      "heroImage": "/images/bali.jpg",
+      "label": "THE SLOW ESCAPE",
+      "itineraryJson": [
+        {
+          "day": 1,
+          "theme": "Arrive & exhale",
+          "description": "Arrive in Bali, settle into a locally hosted stay, and enjoy a welcome meal."
+        },
+        {
+          "day": 2,
+          "theme": "Tegallalang Rice Terraces",
+          "description": "Walk the terraced hills with a local guide. Ask permission before entering working fields. Time for a local lunch and a relaxed afternoon. Transfers and visits are subject to local conditions."
+        },
+        {
+          "day": 3,
+          "theme": "Campuhan Ridge",
+          "description": "An easy ridge walk, best enjoyed in the cooler early morning. Time for a local lunch and a relaxed afternoon. Transfers and visits are subject to local conditions."
+        },
+        {
+          "day": 4,
+          "theme": "Tirta Empul Temple",
+          "description": "A sacred water temple. Wear appropriate clothing and follow local guidance. Time for a local lunch and a relaxed afternoon. Transfers and visits are subject to local conditions."
+        },
+        {
+          "day": 5,
+          "theme": "Tegallalang Rice Terraces",
+          "description": "Walk the terraced hills with a local guide. Ask permission before entering working fields. Time for a local lunch and a relaxed afternoon. Transfers and visits are subject to local conditions."
+        },
+        {
+          "day": 6,
+          "theme": "A day, your way",
+          "description": "An unhurried day to revisit a favorite place or arrange an optional local experience."
+        },
+        {
+          "day": 7,
+          "theme": "Until next time",
+          "description": "Breakfast and an onward transfer. Leave with a new perspective."
+        }
+      ]
+    },
+    {
+      "id": "kyoto-t1",
+      "destinationId": "kyoto",
+      "slug": "kyoto-in-good-time",
+      "title": "Kyoto, in good time",
+      "days": 5,
+      "priceFrom": 1450,
+      "heroImage": "/images/kyoto.jpg",
+      "label": "CULTURAL IMMERSION",
+      "itineraryJson": [
+        {
+          "day": 1,
+          "theme": "Arrive & exhale",
+          "description": "Arrive in Kyoto, settle into a locally hosted stay, and enjoy a welcome meal."
+        },
+        {
+          "day": 2,
+          "theme": "Fushimi Inari Shrine",
+          "description": "Follow the torii-lined paths, respecting worshippers and photography signs. Time for a local lunch and a relaxed afternoon. Transfers and visits are subject to local conditions."
+        },
+        {
+          "day": 3,
+          "theme": "Arashiyama Bamboo Grove",
+          "description": "A bamboo-lined path in western Kyoto. Visit early for a quieter experience. Time for a local lunch and a relaxed afternoon. Transfers and visits are subject to local conditions."
+        },
+        {
+          "day": 4,
+          "theme": "A day, your way",
+          "description": "An unhurried day to revisit a favorite place or arrange an optional local experience."
+        },
+        {
+          "day": 5,
+          "theme": "Until next time",
+          "description": "Breakfast and an onward transfer. Leave with a new perspective."
+        }
+      ]
+    },
+    {
+      "id": "amalfi-t1",
+      "destinationId": "amalfi",
+      "slug": "the-amalfi-state-of-mind",
+      "title": "The Amalfi state of mind",
+      "days": 6,
+      "priceFrom": 1690,
+      "heroImage": "/images/amalfi.jpg",
+      "label": "COASTAL LIVING",
+      "itineraryJson": [
+        {
+          "day": 1,
+          "theme": "Arrive & exhale",
+          "description": "Arrive in Amalfi Coast, settle into a locally hosted stay, and enjoy a welcome meal."
+        },
+        {
+          "day": 2,
+          "theme": "Positano",
+          "description": "Explore winding lanes and seaside viewpoints. Expect plenty of stairs. Time for a local lunch and a relaxed afternoon. Transfers and visits are subject to local conditions."
+        },
+        {
+          "day": 3,
+          "theme": "Ravello",
+          "description": "A hilltop village of gardens and far-reaching coastal views. Time for a local lunch and a relaxed afternoon. Transfers and visits are subject to local conditions."
+        },
+        {
+          "day": 4,
+          "theme": "Path of the Gods",
+          "description": "An exposed coastal trail from Bomerano. Check conditions and carry water. Time for a local lunch and a relaxed afternoon. Transfers and visits are subject to local conditions."
+        },
+        {
+          "day": 5,
+          "theme": "A day, your way",
+          "description": "An unhurried day to revisit a favorite place or arrange an optional local experience."
+        },
+        {
+          "day": 6,
+          "theme": "Until next time",
+          "description": "Breakfast and an onward transfer. Leave with a new perspective."
+        }
+      ]
+    },
+    {
+      "id": "ella-t1",
+      "destinationId": "ella",
+      "slug": "sri-lanka-the-slow-way",
+      "title": "Sri Lanka, the slow way",
+      "days": 5,
+      "priceFrom": 690,
+      "heroImage": "/images/srilanka.jpg",
+      "label": "INTO THE GREEN",
+      "itineraryJson": [
+        {
+          "day": 1,
+          "theme": "Arrive & exhale",
+          "description": "Arrive in Sri Lanka, settle into a locally hosted stay, and enjoy a welcome meal."
+        },
+        {
+          "day": 2,
+          "theme": "Nine Arch Bridge viewpoint",
+          "description": "Enjoy the bridge from safe public viewpoints. Stay off active tracks. Time for a local lunch and a relaxed afternoon. Transfers and visits are subject to local conditions."
+        },
+        {
+          "day": 3,
+          "theme": "Little Adam’s Peak",
+          "description": "A hill walk through tea country with stairs and wide views. Time for a local lunch and a relaxed afternoon. Transfers and visits are subject to local conditions."
+        },
+        {
+          "day": 4,
+          "theme": "A day, your way",
+          "description": "An unhurried day to revisit a favorite place or arrange an optional local experience."
+        },
+        {
+          "day": 5,
+          "theme": "Until next time",
+          "description": "Breakfast and an onward transfer. Leave with a new perspective."
+        }
+      ]
+    },
+    {
+      "id": "algarve-t1",
+      "destinationId": "algarve",
+      "slug": "algarve-at-your-own-pace",
+      "title": "Algarve, at your own pace",
+      "days": 5,
+      "priceFrom": 1090,
+      "heroImage": "/images/algarve.jpg",
+      "label": "ATLANTIC DAYS",
+      "itineraryJson": [
+        {
+          "day": 1,
+          "theme": "Arrive & exhale",
+          "description": "Arrive in The Algarve, settle into a locally hosted stay, and enjoy a welcome meal."
+        },
+        {
+          "day": 2,
+          "theme": "Ponta da Piedade",
+          "description": "Follow marked boardwalks above sculpted sandstone cliffs. Time for a local lunch and a relaxed afternoon. Transfers and visits are subject to local conditions."
+        },
+        {
+          "day": 3,
+          "theme": "Praia Dona Ana",
+          "description": "A beach below tall cliffs. Check tides and cliff warnings. Time for a local lunch and a relaxed afternoon. Transfers and visits are subject to local conditions."
+        },
+        {
+          "day": 4,
+          "theme": "A day, your way",
+          "description": "An unhurried day to revisit a favorite place or arrange an optional local experience."
+        },
+        {
+          "day": 5,
+          "theme": "Until next time",
+          "description": "Breakfast and an onward transfer. Leave with a new perspective."
+        }
+      ]
+    },
+    {
+      "id": "iceland-t1",
+      "destinationId": "iceland",
+      "slug": "iceland-a-wilder-perspective",
+      "title": "Iceland, a wilder perspective",
+      "days": 5,
+      "priceFrom": 1890,
+      "heroImage": "/images/iceland.jpg",
+      "label": "WILD OPEN SPACES",
+      "itineraryJson": [
+        {
+          "day": 1,
+          "theme": "Arrive & exhale",
+          "description": "Arrive in Iceland, settle into a locally hosted stay, and enjoy a welcome meal."
+        },
+        {
+          "day": 2,
+          "theme": "Skógafoss",
+          "description": "A powerful waterfall with a marked viewing area and steps. Time for a local lunch and a relaxed afternoon. Transfers and visits are subject to local conditions."
+        },
+        {
+          "day": 3,
+          "theme": "Seljalandsfoss",
+          "description": "Seasonal footpath access. Check ice closures. Time for a local lunch and a relaxed afternoon. Transfers and visits are subject to local conditions."
+        },
+        {
+          "day": 4,
+          "theme": "A day, your way",
+          "description": "An unhurried day to revisit a favorite place or arrange an optional local experience."
+        },
+        {
+          "day": 5,
+          "theme": "Until next time",
+          "description": "Breakfast and an onward transfer. Leave with a new perspective."
+        }
+      ]
+    }
+  ],
+  "journal": [
+    {
+      "id": "j1",
+      "slug": "the-art-of-slow-travel",
+      "title": "The beautiful art of going a little slower",
+      "excerpt": "Fewer places. Deeper connections. Why the best journeys leave room for the unexpected.",
+      "category": "A WAY OF TRAVELING",
+      "coverImage": "/images/srilanka.jpg",
+      "readMinutes": 5,
+      "publishedAt": "2026-09-18T00:00:00.000Z",
+      "body": "There is a moment on every journey when the itinerary stops mattering. Maybe it happens over a second cup of tea, or halfway through a conversation with someone whose language you barely speak. You stop thinking about what comes next. You are simply there.\n\nSlow travel begins with a small decision: choose one place and give it time. Instead of three cities in five days, stay in one neighborhood. Learn the walk to the bakery. Recognize the person who makes your coffee. Let a place become a little familiar.\n\nLeave a morning unplanned. Take a local bus. Ask your host where they go on a free afternoon. These are small things, but they change the texture of a trip. A destination becomes a collection of people and moments, rather than a checklist.\n\nA family-run stay, a local guide, a meal made with seasonal produce: your choices help keep the character of a place alive. Ask questions, follow local guidance, and remember that someone else calls your destination home.\n\nYou may come back with fewer photographs. But you will probably have more stories."
+    },
+    {
+      "id": "j2",
+      "slug": "a-quieter-side-of-bali",
+      "title": "Finding the Bali between the postcards",
+      "excerpt": "Early mornings, family kitchens, and quieter paths around Ubud.",
+      "category": "FIELD NOTES",
+      "coverImage": "/images/bali.jpg",
+      "readMinutes": 4,
+      "publishedAt": "2026-09-26T00:00:00.000Z",
+      "body": "Ubud wakes gently. Before the scooters fill the roads, offerings appear on doorsteps and the air still holds the night’s cool. This is a good time to walk.\n\nOn Campuhan Ridge, the path rolls through open green hills. Arrive early, carry water, and let the walk take as long as it needs. Back in town, breakfast can become a conversation about what is in season and who grew it.\n\nTo the north, Tegallalang is a working landscape as much as a beautiful one. Go with a local guide, ask before entering fields, and pay locally requested access fees. The terraces are the result of generations of knowledge.\n\nAt Tirta Empul, dress appropriately, respect people who have come to worship, and ask before taking photographs. Participation in a ritual is a personal choice.\n\nThe Bali you remember may be a quiet moment in a busy place. Give yourself time to find it."
+    },
+    {
+      "id": "j3",
+      "slug": "packing-for-possibility",
+      "title": "Pack less. Make room for more.",
+      "excerpt": "A thoughtful packing list for days that don’t quite go to plan—in the best way.",
+      "category": "TRAVEL WELL",
+      "coverImage": "/images/algarve.jpg",
+      "readMinutes": 3,
+      "publishedAt": "2026-10-02T00:00:00.000Z",
+      "body": "A lighter bag makes a flexible journey easier. Start with comfortable shoes, layers you can wear together, and a small day bag. Choose clothes that work for a morning walk and a relaxed evening meal.\n\nCarry a refillable water bottle, sun protection, prescription medicines, and copies of important documents. A compact rain layer earns its place almost everywhere. Check entry requirements and health guidance before leaving.\n\nFor sacred sites, bring clothing that covers shoulders and knees. For coastal and mountain destinations, check local conditions rather than relying on a season’s reputation.\n\nKeep some space in your bag. Not just for the thing you find in a small workshop, but for the freedom of having less to carry."
+    }
+  ]
+}
