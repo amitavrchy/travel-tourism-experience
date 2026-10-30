@@ -160,13 +160,15 @@ export function BookingForm({
           <small>INQUIRY REFERENCE</small>
           <strong>WL-{booking.id.slice(0, 8).toUpperCase()}</strong>
         </div>
-        <Link href="/bookings" className="button button-dark">
-          View my journeys
-          <ArrowRight size={17} />
-        </Link>
-        <button className="text-link" onClick={() => setBooking(null)}>
-          Send another inquiry
-        </button>
+        <div className="booking-success-actions">
+          <Link href="/bookings" className="button button-dark">
+            View my journeys
+            <ArrowRight size={17} />
+          </Link>
+          <button type="button" className="text-link" onClick={() => setBooking(null)}>
+            Send another inquiry
+          </button>
+        </div>
       </div>
     );
   return (

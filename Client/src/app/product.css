@@ -96,11 +96,20 @@
   font-weight: 400;
   margin-top: 7px;
 }
-.booking-success > .text-link {
+.booking-success-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 14px;
+}
+.booking-success-actions > .text-link {
+  align-self: center;
+  justify-content: center;
+  min-height: 44px;
   border: 0;
   background: transparent;
   font-size: var(--text-xs);
-  margin-top: 17px;
+  margin: 0;
 }
 .map-disclaimer {
   font-size: var(--text-xs) !important;
