@@ -103,7 +103,32 @@ export function DestinationListing() {
               <option key={value}>{value}</option>
             ))}
           </select>
-          <select aria-label="Filter by travel month" className="filter-select" value={month} onChange={e => setMonth(e.target.value)}><option value="Any month">Any month</option>{["January","February","March","April","May","June","July","August","September","October","November","December"].map((name, index) => <option key={name} value={index + 1}>{name}</option>)}</select>
+          <select
+            aria-label="Filter by travel month"
+            className="filter-select"
+            value={month}
+            onChange={(e) => setMonth(e.target.value)}
+          >
+            <option value="Any month">Any month</option>
+            {[
+              "January",
+              "February",
+              "March",
+              "April",
+              "May",
+              "June",
+              "July",
+              "August",
+              "September",
+              "October",
+              "November",
+              "December",
+            ].map((name, index) => (
+              <option key={name} value={index + 1}>
+                {name}
+              </option>
+            ))}
+          </select>
           <Link className="button button-outline button-small" href="/map">
             <Map size={15} />
             Map view

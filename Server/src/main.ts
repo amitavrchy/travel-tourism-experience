@@ -23,11 +23,9 @@ async function bootstrap() {
       const bucket = attempts.get(key);
       if (bucket && bucket.until > Date.now()) {
         if (++bucket.count > 30)
-          return res
-            .status(429)
-            .json({
-              message: 'Please wait a few minutes before trying again.',
-            });
+          return res.status(429).json({
+            message: 'Please wait a few minutes before trying again.',
+          });
       } else attempts.set(key, { count: 1, until: Date.now() + 600000 });
     }
     next();

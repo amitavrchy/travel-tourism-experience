@@ -2,6 +2,11 @@ generator client {
   provider = "prisma-client-js"
 }
 
+model AppState {
+  key   String @id
+  value String
+}
+
 enum Role {
   TRAVELER
   ADMIN

@@ -8,6 +8,14 @@ CREATE TYPE "Role" AS ENUM ('TRAVELER', 'ADMIN');
 CREATE TYPE "BookingStatus" AS ENUM ('INQUIRY', 'CONFIRMED', 'CANCELLED');
 
 -- CreateTable
+CREATE TABLE "AppState" (
+    "key" TEXT NOT NULL,
+    "value" TEXT NOT NULL,
+
+    CONSTRAINT "AppState_pkey" PRIMARY KEY ("key")
+);
+
+-- CreateTable
 CREATE TABLE "User" (
     "id" TEXT NOT NULL,
     "email" TEXT NOT NULL,

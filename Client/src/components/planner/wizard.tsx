@@ -195,8 +195,11 @@ export function Wizard() {
     controller.current?.abort();
     controller.current = abort;
     try {
+      const input = { ...draftRef.current, destinationSlug: destination.slug };
+      if (input.destinationSlug !== draftRef.current.destinationSlug)
+        update({ destinationSlug: destination.slug });
       const result = await generation.mutateAsync({
-        input: draftRef.current,
+        input,
         signal: abort.signal,
         onProgress: setProgress,
         onDay: (day) => setStreamedDays((days) => [...days, day]),
@@ -259,6 +262,22 @@ export function Wizard() {
       description: item.notes,
     }));
   const pending = generation.isPending;
+  if (!destination && !plan)
+    return (
+      <div className="container section">
+        <div className="empty-state">
+          <Compass size={38} />
+          <h1>A little room for discovery.</h1>
+          <p>
+            Our local team is gathering new destination knowledge. Please check
+            back for the next collection of journeys.
+          </p>
+          <Link className="button button-dark" href="/journal">
+            A little inspiration from the road
+          </Link>
+        </div>
+      </div>
+    );
   if (savedParam && !plan) {
     return (
       <div className="container section">
@@ -354,7 +373,7 @@ export function Wizard() {
                     day={day}
                     key={day.day}
                     pois={data.pois.filter(
-                      (p) => p.destinationId === destination.id,
+                      (p) => p.destinationId === destination?.id,
                     )}
                     onChange={(updated) => {
                       setPlan({

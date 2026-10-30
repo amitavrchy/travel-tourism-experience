@@ -43,6 +43,7 @@ export function useCatalog() {
     queryKey: ["catalog"],
     queryFn: () => api<Catalog>("catalog"),
     initialData: catalog,
+    initialDataUpdatedAt: 0,
     staleTime: 30000,
     retry: 1,
   });

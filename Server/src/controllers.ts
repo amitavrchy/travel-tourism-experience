@@ -127,7 +127,7 @@ export class AccountController {
       planId = plan.id;
       title = String(plan.title);
       const input = plan.inputJson as { days: number; budget: number };
-      totalEstimate = Math.round(input.days * input.budget * .8 * guests);
+      totalEstimate = Math.round(input.days * input.budget * 0.8 * guests);
     } else throw new BadRequestException('Choose a trip or a saved plan.');
     return this.store.create('bookings', {
       userId: request.user.id,
@@ -168,18 +168,25 @@ export class AccountController {
     const body = object(value);
     const plan = object(body.planJson);
     const input = validateInput(body.inputJson);
-    const destination = await this.store.find('destinations', input.destinationSlug);
-    const pois = (await this.store.all('pois')).filter(row => row.destinationId === destination.id);
-    const experiences = (await this.store.all('experiences')).filter(row => row.destinationId === destination.id);
+    const destination = await this.store.find(
+      'destinations',
+      input.destinationSlug,
+    );
+    const pois = (await this.store.all('pois')).filter(
+      (row) => row.destinationId === destination.id,
+    );
+    const experiences = (await this.store.all('experiences')).filter(
+      (row) => row.destinationId === destination.id,
+    );
     const title = text(plan.title, 'Title', 2, 160);
-    if (
-      !Array.isArray(plan.days) ||
-      plan.days.length !== input.days
-    )
-      throw new BadRequestException('The plan must match the requested number of days.');
+    if (!Array.isArray(plan.days) || plan.days.length !== input.days)
+      throw new BadRequestException(
+        'The plan must match the requested number of days.',
+      );
     for (const [index, dayValue] of plan.days.entries()) {
       const day = object(dayValue);
-      if (number(day.day, 'Day', 1, 14) !== index + 1) throw new BadRequestException('Itinerary days must be sequential.');
+      if (number(day.day, 'Day', 1, 14) !== index + 1)
+        throw new BadRequestException('Itinerary days must be sequential.');
       text(day.theme, 'Day theme', 1, 300);
       if (
         !Array.isArray(day.items) ||
@@ -191,26 +198,70 @@ export class AccountController {
         const item = object(itemValue);
         text(item.title, 'Activity', 1, 300);
         text(item.time, 'Time', 5, 5);
-        if (!/^([01]\d|2[0-3]):[0-5]\d$/.test(String(item.time))) throw new BadRequestException('Use a valid activity time.');
-        if (!['poi','experience','meal','transit'].includes(String(item.type))) throw new BadRequestException('Choose a valid activity type.');
-        if (typeof item.notes !== 'string' || item.notes.length > 2000) throw new BadRequestException('Activity notes must be under 2,000 characters.');
+        if (!/^([01]\d|2[0-3]):[0-5]\d$/.test(String(item.time)))
+          throw new BadRequestException('Use a valid activity time.');
+        if (
+          !['poi', 'experience', 'meal', 'transit'].includes(String(item.type))
+        )
+          throw new BadRequestException('Choose a valid activity type.');
+        if (typeof item.notes !== 'string' || item.notes.length > 2000)
+          throw new BadRequestException(
+            'Activity notes must be under 2,000 characters.',
+          );
         number(item.lat, 'Latitude', -90, 90, false);
         number(item.lng, 'Longitude', -180, 180, false);
         if (item.type === 'poi') {
-          const poi = pois.find(row => row.id === item.sourceId);
-          if (!poi || poi.name !== item.title || Math.abs(Number(poi.lat) - Number(item.lat)) > .005 || Math.abs(Number(poi.lng) - Number(item.lng)) > .005) throw new BadRequestException('Choose a verified destination place for this activity.');
+          const poi = pois.find((row) => row.id === item.sourceId);
+          if (
+            !poi ||
+            poi.name !== item.title ||
+            Math.abs(Number(poi.lat) - Number(item.lat)) > 0.005 ||
+            Math.abs(Number(poi.lng) - Number(item.lng)) > 0.005
+          )
+            throw new BadRequestException(
+              'Choose a verified destination place for this activity.',
+            );
         }
-        if (item.type === 'experience' && !experiences.some(row => row.id === item.sourceId && row.title === item.title)) throw new BadRequestException('Choose a verified destination experience.');
+        if (
+          item.type === 'experience' &&
+          !experiences.some(
+            (row) => row.id === item.sourceId && row.title === item.title,
+          )
+        )
+          throw new BadRequestException(
+            'Choose a verified destination experience.',
+          );
       }
     }
     const budget = object(plan.estimatedBudget);
     number(budget.min, 'Budget', 0, 10000000, false);
     number(budget.max, 'Budget', Number(budget.min), 10000000, false);
     const total = input.days * input.travelers * input.budget;
-    plan.estimatedBudget = { currency: 'USD', min: Math.round(total * .8), max: Math.round(total * 1.2) };
+    plan.estimatedBudget = {
+      currency: 'USD',
+      min: Math.round(total * 0.8),
+      max: Math.round(total * 1.2),
+    };
     plan.tips = strings(plan.tips, 'Travel tips', 1000);
-    if (!['ai','curated'].includes(String(plan.mode))) throw new BadRequestException('This plan needs a valid generation mode.');
-    plan.sources = [{ id: destination.id, title: destination.name, text: destination.embedText }, ...pois.map(row => ({ id: row.id, title: row.name, text: row.description })), ...experiences.map(row => ({ id: row.id, title: row.title, text: row.summary }))];
+    if (!['ai', 'curated'].includes(String(plan.mode)))
+      throw new BadRequestException('This plan needs a valid generation mode.');
+    plan.sources = [
+      {
+        id: destination.id,
+        title: destination.name,
+        text: destination.embedText,
+      },
+      ...pois.map((row) => ({
+        id: row.id,
+        title: row.name,
+        text: row.description,
+      })),
+      ...experiences.map((row) => ({
+        id: row.id,
+        title: row.title,
+        text: row.summary,
+      })),
+    ];
     return this.store.create('plans', {
       userId: request.user.id,
       title,
@@ -365,14 +416,29 @@ export class AdminController {
       }
     for (const field of schema.json || [])
       if (!partial || body[field] !== undefined) {
-        if (!Array.isArray(body[field]) || !(body[field] as unknown[]).length || (body[field] as unknown[]).length > 14)
+        if (
+          !Array.isArray(body[field]) ||
+          !(body[field] as unknown[]).length ||
+          (body[field] as unknown[]).length > 14
+        )
           throw new BadRequestException(`${field} must be a nonempty list.`);
         result[field] = (body[field] as unknown[]).map((value, index) => {
           const day = object(value);
-          if (number(day.day, 'Day', 1, 14) !== index + 1) throw new BadRequestException('Journey days must be sequential.');
-          return { day: index + 1, theme: text(day.theme, 'Day theme', 1, 300), description: text(day.description, 'Day description', 1, 4000) };
+          if (number(day.day, 'Day', 1, 14) !== index + 1)
+            throw new BadRequestException('Journey days must be sequential.');
+          return {
+            day: index + 1,
+            theme: text(day.theme, 'Day theme', 1, 300),
+            description: text(day.description, 'Day description', 1, 4000),
+          };
         });
-        if (body.days !== undefined && (result[field] as unknown[]).length !== body.days) throw new BadRequestException('The itinerary must match the journey length.');
+        if (
+          body.days !== undefined &&
+          (result[field] as unknown[]).length !== body.days
+        )
+          throw new BadRequestException(
+            'The itinerary must match the journey length.',
+          );
       }
     if (result.slug && !/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(String(result.slug)))
       throw new BadRequestException('Use a lowercase, hyphen-separated slug.');
