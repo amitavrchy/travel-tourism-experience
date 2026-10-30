@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@import "./product.css";
 
 :root{--sky:#e8f4f8;--deep:#0b1f2a;--sea:#1f6f8b;--sand:#e6d5b8;--coral:#e07a5f;--foliage:#3d5a45;--paper:#f7f4ef;--muted:#5c6b73;--line:#deded5;--sage:#e9ede4;--white:#fff;--text-xs:.6875rem;--text-sm:.8125rem;--text-base:.9375rem;--text-lg:1.125rem;--radius:5px;--ease:cubic-bezier(.22,1,.36,1)}
 @theme inline{--color-background:var(--paper);--color-foreground:var(--deep);--font-sans:var(--font-ui)}
