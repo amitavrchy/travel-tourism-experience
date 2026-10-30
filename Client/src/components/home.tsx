@@ -20,6 +20,7 @@ import {
 import { useCatalog } from "./providers";
 import { DestinationCard, JournalCard, TripCard } from "./cards";
 import { Reveal } from "./motion";
+import { useCarousel } from "./use-carousel";
 
 const feelings = [
   "A little of everything",
@@ -37,7 +38,7 @@ const feelingTags: Record<string, string[]> = {
 export function Home() {
   const { data } = useCatalog();
   const [feeling, setFeeling] = useState(feelings[0]);
-  const rail = useRef<HTMLDivElement>(null);
+  const carousel = useCarousel(data.destinations.length);
   const hero = useRef<HTMLElement>(null);
   useEffect(() => {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
@@ -214,7 +215,7 @@ export function Home() {
                   className={feeling === item ? "selected" : ""}
                   onClick={() => {
                     setFeeling(item);
-                    rail.current?.scrollTo({ left: 0, behavior: "smooth" });
+                    carousel.reset();
                   }}
                 >
                   {i === 0 && <Globe2 size={15} />}
@@ -226,31 +227,23 @@ export function Home() {
               <button
                 className="icon-button bordered"
                 aria-label="Previous destinations"
-                onClick={() =>
-                  rail.current?.scrollBy({
-                    left: -(rail.current.clientWidth * 0.8),
-                    behavior: "smooth",
-                  })
-                }
+                disabled={!carousel.bounds.previous}
+                onClick={() => carousel.move(-1)}
               >
                 <ArrowLeft size={18} />
               </button>
               <button
                 className="icon-button bordered"
                 aria-label="Next destinations"
-                onClick={() =>
-                  rail.current?.scrollBy({
-                    left: rail.current.clientWidth * 0.8,
-                    behavior: "smooth",
-                  })
-                }
+                disabled={!carousel.bounds.next}
+                onClick={() => carousel.move(1)}
               >
                 <ArrowRight size={18} />
               </button>
             </div>
           </div>
         </Reveal>
-        <div className="destination-rail" ref={rail}>
+        <div className="destination-rail" ref={carousel.ref} role="region" aria-label="Featured destinations" tabIndex={0} onKeyDown={event => { if (event.key === "ArrowRight" || event.key === "ArrowLeft") { event.preventDefault(); carousel.move(event.key === "ArrowRight" ? 1 : -1); } }}>
           {shown.map((d, i) => (
             <DestinationCard destination={d} index={i} key={d.id} />
           ))}

@@ -16,9 +16,9 @@
   --line: #deded5;
   --sage: #e9ede4;
   --white: #fff;
-  --text-xs: 0.6875rem;
-  --text-sm: 0.8125rem;
-  --text-base: 0.9375rem;
+  --text-xs: 0.875rem;
+  --text-sm: 1rem;
+  --text-base: 1rem;
   --text-lg: 1.125rem;
   --radius: 5px;
   --ease: cubic-bezier(0.22, 1, 0.36, 1);
@@ -659,8 +659,12 @@ button:focus-visible {
 .destination-rail {
   display: flex;
   gap: 24px;
-  overflow: auto;
-  scroll-snap-type: x mandatory;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scroll-snap-type: x proximity;
+  overscroll-behavior-x: contain;
+  overscroll-behavior-y: auto;
+  touch-action: pan-x pan-y pinch-zoom;
   scrollbar-width: none;
   padding-bottom: 2px;
 }

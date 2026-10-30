@@ -1,6 +1,37 @@
 import { test, expect, type Page } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
 
+test("featured destinations preserve vertical scrolling and support horizontal keyboard navigation", async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: "no-preference" });
+  await page.goto("/");
+  const rail = page.getByRole("region", { name: "Featured destinations" });
+  await rail.scrollIntoViewIfNeeded();
+  await page.waitForTimeout(250);
+  const before = await page.evaluate(() => window.scrollY);
+  await rail.hover();
+  await page.mouse.wheel(0, 500);
+  await expect.poll(() => page.evaluate(() => window.scrollY)).toBeGreaterThan(before + 100);
+  await rail.scrollIntoViewIfNeeded();
+  await rail.focus();
+  await page.keyboard.press("ArrowRight");
+  await expect.poll(() => rail.evaluate(element => element.scrollLeft)).toBeGreaterThan(100);
+  await page.keyboard.press("ArrowLeft");
+  await expect.poll(() => rail.evaluate(element => element.scrollLeft)).toBeLessThan(4);
+});
+
+test("all product text uses at least 14px on every primary page", async ({ page }) => {
+  for (const path of ["/", "/destinations", "/trips", "/plan", "/bookings", "/admin", "/journal", "/map"]) {
+    await page.goto(path);
+    await page.locator("h1").first().waitFor();
+    const undersized = await page.evaluate(() => [...document.querySelectorAll<HTMLElement>("body *")].filter(element => {
+      const style = getComputedStyle(element);
+      const rect = element.getBoundingClientRect();
+      return element instanceof HTMLElement && rect.width > 0 && rect.height > 0 && style.visibility !== "hidden" && [...element.childNodes].some(node => node.nodeType === Node.TEXT_NODE && node.textContent?.trim()) && parseFloat(style.fontSize) < 14;
+    }).map(element => ({ tag: element.tagName, class: element.className, size: getComputedStyle(element).fontSize })));
+    expect(undersized, path).toEqual([]);
+  }
+});
+
 async function register(page: Page) {
   await page.goto("/bookings");
   await page.getByRole("button", { name: "Sign in to your journeys" }).click();

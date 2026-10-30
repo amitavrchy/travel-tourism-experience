@@ -1,0 +1,50 @@
+/* A shared floor includes library controls and compact editorial elements. */
+html { font-size: 16px; }
+body, input, select, textarea { font-size: 16px; }
+small, .leaflet-container, .leaflet-control-attribution, .leaflet-popup-content,
+.rdp-root, .rdp-weekday, .rdp-caption_label, .rdp-dropdowns, .rdp-day_button { font-size: 14px; }
+.destination-rail, .feeling-tabs { min-width: 0; }
+.destination-controls { align-items: flex-start; }
+.carousel-controls button:disabled { cursor: default; }
+.rail-caption { flex-wrap: wrap; row-gap: 12px; }
+.sample-plan { width: min(380px,100%); }
+.sample-plan-heading { flex-wrap: wrap; gap: 12px; }
+.sample-plan-tags { flex-wrap: wrap; }
+.sample-day { gap: 10px; }
+.floating-chip { white-space: normal; max-width: 100%; }
+.planner-story { gap: 45px; }
+.planner-visual { min-height: 570px; }
+.sample-day-number { min-width: 27px; }
+.sample-plan-link { min-height: 48px; }
+.footer-top, .footer-bottom { flex-wrap: wrap; }
+.hero-location small { letter-spacing: .04em; }
+.wizard-steps > button > small { white-space: normal; }
+.wizard-steps > button:not(:last-child):after { display: none; }
+.wizard-bottom { flex-wrap: wrap; }
+.trip-meta { flex-wrap: wrap; }
+.item-coordinate { flex-wrap: wrap; }
+.sample-plan-heading > span { line-height: 1.7; }
+@media(max-width:1150px) { .desktop-nav { display:none; } .mobile-menu-button { display:flex; } .nav-inner { gap:15px; } }
+@media(max-width:900px) { .planner-story { gap:30px; } .sample-plan { padding-inline:18px; } .sample-day { flex-wrap:wrap; } .sample-day > svg { display:none; } }
+@media(max-width:680px) {
+  .hero-location { max-width:55%; }
+  .hero-bottom { gap:16px; align-items:center; }
+  .hero-location small { display:none; }
+  .scroll-hint { letter-spacing:.03em; }
+  .promise-bar>.container { gap:18px 12px; }
+  .promise-bar span { flex-direction:column; text-align:center; }
+  .planner-story { padding-inline:24px; }
+  .planner-visual { min-height:600px; margin-inline:0; }
+  .floating-chip { position:static; transform:none; margin-bottom:18px; }
+  .planner-visual { flex-direction:column; }
+  .sample-plan { width:100%; transform:none; }
+  .visual-note { right:0; bottom:-10px; }
+  .hero-kicker { letter-spacing:.1em; }
+  .wizard-steps>button { min-width:0; }
+  .wizard-steps>button>small { line-height:1.5; }
+  .wizard-bottom>.text-link { max-width:none; }
+  .hero-pagination { display:none; }
+  .destination-controls .feeling-tabs { flex:1; }
+  .destination-rail { scroll-padding-inline:0; }
+  .sample-day strong, .sample-day small { overflow-wrap:anywhere; }
+}

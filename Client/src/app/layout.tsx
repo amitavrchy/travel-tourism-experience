@@ -3,6 +3,7 @@ import { Manrope, Playfair_Display, Space_Grotesk } from "next/font/google";
 import { Providers } from "@/components/providers";
 import { Shell } from "@/components/shell";
 import "./globals.css";
+import "./readability.css";
 
 const manrope = Manrope({
   variable: "--font-ui",

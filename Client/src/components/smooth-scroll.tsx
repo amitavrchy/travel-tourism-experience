@@ -19,7 +19,7 @@ export function SmoothScroll() {
       duration: 1.05,
       prevent: (node) =>
         !!node.closest(
-          ".dialog,.destination-rail,.feeling-tabs,.leaflet-container",
+          ".dialog,.leaflet-container,.map-sidebar",
         ),
     });
     const observer = new MutationObserver(() => {
