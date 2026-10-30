@@ -268,7 +268,7 @@ export class PlannerController {
           plan.sources?.length &&
           ['ai', 'curated'].includes(plan.mode)
         )
-          return plan;
+          return { ...plan, estimatedBudget: fallback.estimatedBudget };
       }
     } catch (error) {
       if (signal?.aborted) throw error;

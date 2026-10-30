@@ -400,6 +400,7 @@ export function Home() {
         </div>
       </section>
       <section id="our-way" className="our-way">
+        <div className="container season-note"><div><Sun size={24} strokeWidth={1.3} /><p><strong>The softer side of September.</strong><br />Warm coastlines, long lunches, and a little more room to wander. A shoulder-season collection.</p></div><Link href="/destinations?tag=Coast&month=9" className="text-link">Find your coastal escape<ArrowUpRight size={16} /></Link></div>
         <div className="container our-way-grid">
           <Reveal className="our-way-photo">
             <Image

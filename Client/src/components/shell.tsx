@@ -95,19 +95,7 @@ export function Shell({ children }: { children: React.ReactNode }) {
             >
               <Search size={20} />
             </button>
-            <button
-              className="icon-button account-button"
-              aria-label={user ? "Your journeys" : "Sign in"}
-              onClick={user ? undefined : openAuth}
-            >
-              {user ? (
-                <Link href="/bookings" aria-label="Your journeys">
-                  <UserRound size={20} />
-                </Link>
-              ) : (
-                <UserRound size={20} />
-              )}
-            </button>
+            {user ? <Link className="icon-button account-button" href="/bookings" aria-label="Your journeys"><UserRound size={20} /></Link> : <button className="icon-button account-button" aria-label="Sign in" onClick={openAuth}><UserRound size={20} /></button>}
             <Link className="button nav-cta" href="/plan">
               <Sparkles size={15} />
               Plan my journey

@@ -14,3 +14,4 @@ ai/.chroma/
 *.tsbuildinfo
 test-results/
 playwright-report/
+.next-e2e/

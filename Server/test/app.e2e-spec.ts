@@ -18,6 +18,7 @@ describe('Wanderline API (e2e)', () => {
     directory = await mkdtemp(join(tmpdir(), 'wanderline-test-'));
     process.env.DATA_DIRECTORY = directory;
     process.env.STORAGE_MODE = 'file';
+    process.env.AI_SERVICE_URL = 'http://127.0.0.1:9';
     process.env.ADMIN_EMAIL = 'admin@example.com';
     process.env.ADMIN_PASSWORD = 'test-admin-password-123';
     const moduleFixture = await Test.createTestingModule({
@@ -138,6 +139,22 @@ describe('Wanderline API (e2e)', () => {
       .auth(adminToken, { type: 'bearer' })
       .send({ heroImage: 'javascript:alert(1)' })
       .expect(400);
+  });
+  it('generates valid plans, saves verified places and normalizes submitted estimates', async () => {
+    const input = { destinationSlug: 'bali', days: 5, travelers: 2, budget: 150, pace: 'BALANCED', vibes: ['Nature'], interests: ['Local food'] };
+    const generated = await request(app.getHttpServer()).post('/planner/generate').send(input).expect(201);
+    expect(generated.body.days).toHaveLength(5);
+    expect(generated.body.sources.length).toBeGreaterThan(0);
+    const plan = { ...generated.body, estimatedBudget: { currency: 'USD', min: 1, max: 2 } };
+    const saved = await request(app.getHttpServer()).post('/plans').auth(token, { type: 'bearer' }).send({ inputJson: input, planJson: plan }).expect(201);
+    expect(saved.body.planJson.estimatedBudget.min).toBe(1200);
+    const date = new Date(Date.now() + 86400000 * 10).toISOString().slice(0, 10);
+    const booking = await request(app.getHttpServer()).post('/bookings').auth(token, { type: 'bearer' }).send({ planId: saved.body.id, guests: 3, startDate: date, email: address }).expect(201);
+    expect(booking.body.totalEstimate).toBe(1800);
+    const badPlan = structuredClone(generated.body);
+    badPlan.days[0].items[0].lat = 80;
+    await request(app.getHttpServer()).post('/plans').auth(token, { type: 'bearer' }).send({ inputJson: input, planJson: badPlan }).expect(400);
+    await request(app.getHttpServer()).delete(`/plans/${saved.body.id}`).auth(token, { type: 'bearer' }).expect(200);
   });
   afterAll(async () => {
     await app.close();

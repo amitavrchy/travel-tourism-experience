@@ -42,7 +42,7 @@
   background: transparent;
   border: 0;
   padding: 0;
-  color: #8c968b;
+  color: #5c6b73;
   position: relative;
 }
 .wizard-steps > button:not(:last-child):after {
@@ -619,7 +619,7 @@
 .item-type {
   font-size: var(--text-xs);
   letter-spacing: 0.12em;
-  color: #8b9d7d;
+  color: #52634b;
   display: block;
   margin-bottom: 5px;
 }
@@ -641,7 +641,7 @@
   align-items: center;
   gap: 5px;
   font-size: var(--text-xs);
-  color: #7e8d75;
+  color: #52634b;
   margin-top: 10px;
 }
 .edit-day-button {

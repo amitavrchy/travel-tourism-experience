@@ -39,6 +39,7 @@ import { useGenerateItinerary } from "@/features/planner/useGenerateItinerary";
 import { useApp, useCatalog, Dialog } from "../providers";
 import { MapView } from "../map/map-view";
 import { DayCard } from "./day-card";
+import { PrintablePlan } from "./printable-plan";
 import { BookingForm, DateField } from "../booking-form";
 import { exportPlan } from "../account";
 
@@ -331,7 +332,7 @@ export function Wizard() {
                 )}
                 {savedId && !savedDirty
                   ? "Saved"
-                  : savedDirty
+                  : savedId && savedDirty
                     ? "Save a new version"
                     : "Save my plan"}
               </button>
@@ -459,6 +460,7 @@ export function Wizard() {
               </div>
             </aside>
           </div>
+          <PrintablePlan plan={plan} input={draft} />
           <AnimatePresence>
             {booking && savedId && (
               <Dialog

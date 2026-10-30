@@ -2,6 +2,7 @@
 @import "./product.css";
 @import "./planner.css";
 @import "./admin.css";
+@import "./finishing.css";
 
 :root {
   --sky: #e8f4f8;
@@ -928,7 +929,7 @@ button:focus-visible {
 .sample-day-number {
   font-family: var(--font-numerals);
   font-size: 20px;
-  color: #849784;
+  color: #566d54;
 }
 .sample-day > div {
   flex: 1;
@@ -1272,7 +1273,7 @@ textarea {
 }
 input::placeholder,
 textarea::placeholder {
-  color: #86908a;
+  color: #69756c;
 }
 textarea {
   min-height: 110px;
@@ -1709,7 +1710,7 @@ label small {
 .poi-number {
   font-family: var(--font-numerals);
   font-size: 24px;
-  color: #8e9c87;
+  color: #62735a;
   min-width: 30px;
 }
 .poi-row h3 {
@@ -1759,7 +1760,7 @@ label small {
 .day-heading > span:first-child {
   font-family: var(--font-numerals);
   font-size: 27px;
-  color: #8e9c87;
+  color: #62735a;
   min-width: 37px;
 }
 .day-heading > div {

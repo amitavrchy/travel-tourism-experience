@@ -62,10 +62,10 @@ export function futureDate(value: unknown): string {
     throw new BadRequestException('Choose a date within the next two years.');
   return date.toISOString();
 }
-export function strings(value: unknown, field: string): string[] {
+export function strings(value: unknown, field: string, maxLength = 80): string[] {
   if (!Array.isArray(value) || value.length > 15)
     throw new BadRequestException(
       `${field} must be a list of up to 15 values.`,
     );
-  return value.map((item) => text(item, field, 1, 80));
+  return value.map((item) => text(item, field, 1, maxLength));
 }

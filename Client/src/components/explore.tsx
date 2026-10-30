@@ -22,6 +22,7 @@ export function DestinationListing() {
   const [query, setQuery] = useState(params.get("q") || "");
   const [region, setRegion] = useState("All regions");
   const [tag, setTag] = useState(params.get("tag") || "All experiences");
+  const [month, setMonth] = useState(params.get("month") || "Any month");
   const [sort, setSort] = useState("Our favorites");
   const found = data.destinations
     .filter(
@@ -30,7 +31,8 @@ export function DestinationListing() {
           .toLowerCase()
           .includes(query.toLowerCase()) &&
         (region === "All regions" || d.region === region) &&
-        (tag === "All experiences" || d.tags.includes(tag)),
+        (tag === "All experiences" || d.tags.includes(tag)) &&
+        (month === "Any month" || d.bestMonths.includes(Number(month))),
     )
     .sort((a, b) =>
       sort === "Price: low to high"
@@ -101,6 +103,7 @@ export function DestinationListing() {
               <option key={value}>{value}</option>
             ))}
           </select>
+          <select aria-label="Filter by travel month" className="filter-select" value={month} onChange={e => setMonth(e.target.value)}><option value="Any month">Any month</option>{["January","February","March","April","May","June","July","August","September","October","November","December"].map((name, index) => <option key={name} value={index + 1}>{name}</option>)}</select>
           <Link className="button button-outline button-small" href="/map">
             <Map size={15} />
             Map view
@@ -144,6 +147,7 @@ export function DestinationListing() {
                 setQuery("");
                 setRegion("All regions");
                 setTag("All experiences");
+                setMonth("Any month");
               }}
             >
               Clear filters
