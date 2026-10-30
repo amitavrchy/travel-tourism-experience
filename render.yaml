@@ -6,7 +6,6 @@ services:
     runtime: docker
     plan: free
     region: oregon
-    rootDir: Server
     dockerfilePath: ./Server/Dockerfile.render
     dockerContext: ./Server
     healthCheckPath: /health
