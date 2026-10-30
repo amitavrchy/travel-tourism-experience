@@ -1,0 +1,49 @@
+# Wanderline API + bundled Postgres (single free-tier Render web service).
+# Data is ephemeral without a paid disk — catalog reseeds on boot via StoreService.
+FROM node:22-bookworm-slim
+
+RUN apt-get update \
+  && apt-get install -y --no-install-recommends \
+    ca-certificates \
+    curl \
+    openssl \
+    postgresql \
+    postgresql-contrib \
+    procps \
+  && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /app/Server
+
+COPY package.json package-lock.json ./
+COPY prisma ./prisma
+COPY prisma.config.ts ./
+
+RUN npm ci
+
+COPY src ./src
+COPY tsconfig.json tsconfig.build.json nest-cli.json ./
+COPY data ./data
+COPY docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
+
+# Build Nest, drop unused deps, keep prisma CLI for migrate deploy at boot.
+RUN npx prisma generate \
+  && npm run build \
+  && npm prune --omit=dev --ignore-scripts \
+  && npm install prisma@6.19.3 --no-save --omit=dev \
+  && chmod +x /usr/local/bin/docker-entrypoint.sh \
+  && mkdir -p /var/lib/postgresql/data /var/run/postgresql \
+  && chown -R postgres:postgres /var/lib/postgresql /var/run/postgresql
+
+ENV NODE_ENV=production \
+    HOST=0.0.0.0 \
+    PORT=4000 \
+    STORAGE_MODE=postgres \
+    PGDATA=/var/lib/postgresql/data \
+    POSTGRES_USER=postgres \
+    POSTGRES_PASSWORD=postgres \
+    POSTGRES_DB=wanderline \
+    DATABASE_URL=postgresql://postgres:postgres@127.0.0.1:5432/wanderline
+
+EXPOSE 4000
+
+ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]

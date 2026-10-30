@@ -1,19 +1,14 @@
-# Wanderline travel API + Postgres on Render
-databases:
-  - name: wanderline-db
-    plan: free
-    postgresMajorVersion: "16"
-    region: oregon
-
+# Wanderline travel API with Postgres bundled inside the Docker web service.
+# Free tier: no managed DB, no persistent disk — catalog reseeds on every cold start.
 services:
   - type: web
     name: wanderline-api
-    runtime: node
+    runtime: docker
     plan: free
     region: oregon
     rootDir: Server
-    buildCommand: NPM_CONFIG_PRODUCTION=false npm ci && npx prisma generate && npm run build
-    startCommand: npx prisma migrate deploy && node dist/main.js
+    dockerfilePath: ./Server/Dockerfile.render
+    dockerContext: ./Server
     healthCheckPath: /health
     envVars:
       - key: NODE_ENV
@@ -24,10 +19,14 @@ services:
         value: "4000"
       - key: STORAGE_MODE
         value: postgres
+      - key: POSTGRES_USER
+        value: postgres
+      - key: POSTGRES_PASSWORD
+        value: postgres
+      - key: POSTGRES_DB
+        value: wanderline
       - key: DATABASE_URL
-        fromDatabase:
-          name: wanderline-db
-          property: connectionString
+        value: postgresql://postgres:postgres@127.0.0.1:5432/wanderline
       - key: JWT_SECRET
         generateValue: true
       - key: JWT_REFRESH_SECRET
