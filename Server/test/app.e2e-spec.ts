@@ -25,7 +25,7 @@ describe('Wanderline API (e2e)', () => {
       imports: [AppModule],
     }).compile();
 
-    app = moduleFixture.createNestApplication();
+    app = moduleFixture.createNestApplication({ rawBody: true });
     await app.init();
   });
 

@@ -1,14 +1,14 @@
-import { spawn } from "node:child_process";
-import { createServer } from "node:net";
-import { fileURLToPath } from "node:url";
+import { spawn } from 'node:child_process';
+import { createServer } from 'node:net';
+import { fileURLToPath } from 'node:url';
 
-const root = fileURLToPath(new URL("../", import.meta.url));
+const root = fileURLToPath(new URL('../../', import.meta.url));
 async function freePort(first) {
   for (let port = first; port < first + 20; port++) {
     const available = await new Promise((resolve) => {
       const server = createServer();
-      server.once("error", () => resolve(false));
-      server.listen(port, "127.0.0.1", () => server.close(() => resolve(true)));
+      server.once('error', () => resolve(false));
+      server.listen(port, '127.0.0.1', () => server.close(() => resolve(true)));
     });
     if (available) return port;
   }
@@ -23,15 +23,15 @@ function start(directory, script, args, env) {
   const child = spawn(process.execPath, [script, ...args], {
     cwd: `${root}/${directory}`,
     env: { ...process.env, ...env },
-    stdio: "inherit",
+    stdio: 'inherit',
     windowsHide: true,
   });
   children.push(child);
-  child.on("error", (error) => {
+  child.on('error', (error) => {
     console.error(error.message);
     stop();
   });
-  child.on("exit", (code) => {
+  child.on('exit', (code) => {
     if (code && !stopping) stop(code);
   });
 }
@@ -41,25 +41,25 @@ function stop(code = 0) {
   stopping = true;
   for (const child of children) {
     if (!child.pid) continue;
-    if (process.platform === "win32")
-      spawn("taskkill", ["/pid", String(child.pid), "/t", "/f"], {
-        stdio: "ignore",
+    if (process.platform === 'win32')
+      spawn('taskkill', ['/pid', String(child.pid), '/t', '/f'], {
+        stdio: 'ignore',
         windowsHide: true,
       });
-    else child.kill("SIGTERM");
+    else child.kill('SIGTERM');
   }
   setTimeout(() => process.exit(code), 500).unref();
 }
-process.on("SIGINT", () => stop());
-process.on("SIGTERM", () => stop());
-start("Server", "node_modules/@nestjs/cli/bin/nest.js", ["start", "--watch"], {
+process.on('SIGINT', () => stop());
+process.on('SIGTERM', () => stop());
+start('Server', 'node_modules/@nestjs/cli/bin/nest.js', ['start', '--watch'], {
   PORT: String(serverPort),
   CLIENT_ORIGIN: `http://127.0.0.1:${clientPort}`,
 });
 start(
-  "Client",
-  "node_modules/next/dist/bin/next",
-  ["dev", "--hostname", "127.0.0.1", "--port", String(clientPort)],
+  'Client',
+  'node_modules/next/dist/bin/next',
+  ['dev', '--hostname', '127.0.0.1', '--port', String(clientPort)],
   { API_URL: `http://127.0.0.1:${serverPort}` },
 );
 console.log(

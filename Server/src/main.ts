@@ -3,7 +3,7 @@ import { AppModule } from './app.module.js';
 import type { Request, Response, NextFunction } from 'express';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(AppModule, { rawBody: true });
   app.enableCors({
     origin: process.env.CLIENT_ORIGIN || 'http://localhost:3000',
   });

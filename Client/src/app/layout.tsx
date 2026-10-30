@@ -4,6 +4,7 @@ import { Providers } from "@/components/providers";
 import { Shell } from "@/components/shell";
 import "./globals.css";
 import "./readability.css";
+import "./payments.css";
 
 const manrope = Manrope({
   variable: "--font-ui",

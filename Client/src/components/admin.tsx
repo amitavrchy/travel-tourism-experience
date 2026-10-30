@@ -319,6 +319,10 @@ export function Admin() {
             <em>thoughtfully managed.</em>
           </h1>
         </div>
+        <Link className="button button-dark" href="/admin/payments">
+          <Users size={17} />
+          Bookings & payments
+        </Link>
         <Link className="text-link" href="/bookings">
           <ArrowLeft size={15} />
           My journeys

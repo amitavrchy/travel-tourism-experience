@@ -38,7 +38,12 @@ const feelingTags: Record<string, string[]> = {
 export function Home() {
   const { data } = useCatalog();
   const [feeling, setFeeling] = useState(feelings[0]);
-  const carousel = useCarousel(data.destinations.length);
+  const {
+    ref: railRef,
+    bounds: carouselBounds,
+    move: moveCarousel,
+    reset: resetCarousel,
+  } = useCarousel(data.destinations.length);
   const hero = useRef<HTMLElement>(null);
   useEffect(() => {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
@@ -62,7 +67,7 @@ export function Home() {
           });
           gsap.fromTo(
             ".explore-orbit",
-            { rotate: -8, scale: 0.92 },
+            { rotate: -8, scale: 1 },
             {
               rotate: 3,
               scale: 1,
@@ -215,7 +220,7 @@ export function Home() {
                   className={feeling === item ? "selected" : ""}
                   onClick={() => {
                     setFeeling(item);
-                    carousel.reset();
+                    resetCarousel();
                   }}
                 >
                   {i === 0 && <Globe2 size={15} />}
@@ -227,23 +232,35 @@ export function Home() {
               <button
                 className="icon-button bordered"
                 aria-label="Previous destinations"
-                disabled={!carousel.bounds.previous}
-                onClick={() => carousel.move(-1)}
+                disabled={!carouselBounds.previous}
+                onClick={() => moveCarousel(-1)}
               >
                 <ArrowLeft size={18} />
               </button>
               <button
                 className="icon-button bordered"
                 aria-label="Next destinations"
-                disabled={!carousel.bounds.next}
-                onClick={() => carousel.move(1)}
+                disabled={!carouselBounds.next}
+                onClick={() => moveCarousel(1)}
               >
                 <ArrowRight size={18} />
               </button>
             </div>
           </div>
         </Reveal>
-        <div className="destination-rail" ref={carousel.ref} role="region" aria-label="Featured destinations" tabIndex={0} onKeyDown={event => { if (event.key === "ArrowRight" || event.key === "ArrowLeft") { event.preventDefault(); carousel.move(event.key === "ArrowRight" ? 1 : -1); } }}>
+        <div
+          className="destination-rail"
+          ref={railRef}
+          role="region"
+          aria-label="Featured destinations"
+          tabIndex={0}
+          onKeyDown={(event) => {
+            if (event.key === "ArrowRight" || event.key === "ArrowLeft") {
+              event.preventDefault();
+              moveCarousel(event.key === "ArrowRight" ? 1 : -1);
+            }
+          }}
+        >
           {shown.map((d, i) => (
             <DestinationCard destination={d} index={i} key={d.id} />
           ))}

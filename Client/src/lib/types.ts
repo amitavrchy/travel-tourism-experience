@@ -112,6 +112,27 @@ export type Booking = {
   totalEstimate: number;
   notes?: string;
   createdAt: string;
+  payment?: Payment | null;
+};
+export type Payment = {
+  id: string;
+  bookingId: string;
+  userId: string;
+  amountCents: number;
+  currency: string;
+  status:
+    | "PENDING"
+    | "PROCESSING"
+    | "PAID"
+    | "FAILED"
+    | "EXPIRED"
+    | "REFUND_PENDING"
+    | "REFUNDED";
+  receiptUrl?: string;
+  refundId?: string;
+  refundedAmountCents: number;
+  livemode: boolean;
+  createdAt: string;
 };
 export type Catalog = {
   destinations: Destination[];

@@ -11,6 +11,12 @@ import {
   AdminController,
 } from './controllers.js';
 import { PlannerController } from './planner.js';
+import {
+  PaymentService,
+  PaymentsController,
+  PaymentAdminController,
+  StripeGateway,
+} from './payments.js';
 
 @Module({
   imports: [
@@ -35,10 +41,19 @@ import { PlannerController } from './planner.js';
   controllers: [
     AuthController,
     AccountController,
+    PaymentAdminController,
+    PaymentsController,
     AdminController,
     PlannerController,
     CatalogController,
   ],
-  providers: [StoreService, AuthService, AuthGuard, AdminGuard],
+  providers: [
+    StoreService,
+    AuthService,
+    AuthGuard,
+    AdminGuard,
+    PaymentService,
+    StripeGateway,
+  ],
 })
 export class AppModule {}

@@ -1,7 +1,9 @@
 import { test, expect, type Page } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
 
-test("featured destinations preserve vertical scrolling and support horizontal keyboard navigation", async ({ page }) => {
+test("featured destinations preserve vertical scrolling and support horizontal keyboard navigation", async ({
+  page,
+}) => {
   await page.emulateMedia({ reducedMotion: "no-preference" });
   await page.goto("/");
   const rail = page.getByRole("region", { name: "Featured destinations" });
@@ -10,24 +12,59 @@ test("featured destinations preserve vertical scrolling and support horizontal k
   const before = await page.evaluate(() => window.scrollY);
   await rail.hover();
   await page.mouse.wheel(0, 500);
-  await expect.poll(() => page.evaluate(() => window.scrollY)).toBeGreaterThan(before + 100);
+  await expect
+    .poll(() => page.evaluate(() => window.scrollY))
+    .toBeGreaterThan(before + 100);
   await rail.scrollIntoViewIfNeeded();
   await rail.focus();
   await page.keyboard.press("ArrowRight");
-  await expect.poll(() => rail.evaluate(element => element.scrollLeft)).toBeGreaterThan(100);
+  await expect
+    .poll(() => rail.evaluate((element) => element.scrollLeft))
+    .toBeGreaterThan(100);
   await page.keyboard.press("ArrowLeft");
-  await expect.poll(() => rail.evaluate(element => element.scrollLeft)).toBeLessThan(4);
+  await expect
+    .poll(() => rail.evaluate((element) => element.scrollLeft))
+    .toBeLessThan(4);
 });
 
-test("all product text uses at least 14px on every primary page", async ({ page }) => {
-  for (const path of ["/", "/destinations", "/trips", "/plan", "/bookings", "/admin", "/journal", "/map"]) {
+test("all product text uses at least 14px on every primary page", async ({
+  page,
+}) => {
+  for (const path of [
+    "/",
+    "/destinations",
+    "/trips",
+    "/plan",
+    "/bookings",
+    "/admin",
+    "/journal",
+    "/map",
+  ]) {
     await page.goto(path);
     await page.locator("h1").first().waitFor();
-    const undersized = await page.evaluate(() => [...document.querySelectorAll<HTMLElement>("body *")].filter(element => {
-      const style = getComputedStyle(element);
-      const rect = element.getBoundingClientRect();
-      return element instanceof HTMLElement && rect.width > 0 && rect.height > 0 && style.visibility !== "hidden" && [...element.childNodes].some(node => node.nodeType === Node.TEXT_NODE && node.textContent?.trim()) && parseFloat(style.fontSize) < 14;
-    }).map(element => ({ tag: element.tagName, class: element.className, size: getComputedStyle(element).fontSize })));
+    const undersized = await page.evaluate(() =>
+      [...document.querySelectorAll<HTMLElement>("body *")]
+        .filter((element) => {
+          const style = getComputedStyle(element);
+          const rect = element.getBoundingClientRect();
+          return (
+            element instanceof HTMLElement &&
+            rect.width > 0 &&
+            rect.height > 0 &&
+            style.visibility !== "hidden" &&
+            [...element.childNodes].some(
+              (node) =>
+                node.nodeType === Node.TEXT_NODE && node.textContent?.trim(),
+            ) &&
+            parseFloat(style.fontSize) < 14
+          );
+        })
+        .map((element) => ({
+          tag: element.tagName,
+          class: element.className,
+          size: getComputedStyle(element).fontSize,
+        })),
+    );
     expect(undersized, path).toEqual([]);
   }
 });
@@ -51,6 +88,80 @@ async function register(page: Page) {
     page.getByRole("heading", { name: "Hello, Curious." }),
   ).toBeVisible();
 }
+
+test("travel desk approvals unlock secure checkout and a cancelled checkout can be retried", async ({
+  page,
+  browser,
+}) => {
+  await register(page);
+  const departure = new Date(Date.now() + 30 * 86400000)
+    .toISOString()
+    .slice(0, 10);
+  const response = await page.request.post("/api/bookings", {
+    data: {
+      packageId: "bali-t1",
+      startDate: departure,
+      guests: 1,
+      email: "payment-test@example.com",
+    },
+  });
+  expect(response.ok()).toBe(true);
+  const booking = await response.json();
+  await page.goto("/bookings?tab=bookings");
+  await expect(page.getByRole("button", { name: /Pay securely/ })).toHaveCount(
+    0,
+  );
+  const adminContext = await browser.newContext();
+  const admin = await adminContext.newPage();
+  await admin.goto("/admin/payments");
+  await admin.getByRole("button", { name: "Sign in to the studio" }).click();
+  const dialog = admin.getByRole("dialog");
+  await dialog.getByLabel("Email address").fill("admin@wanderline.test");
+  await dialog
+    .getByLabel("Password", { exact: true })
+    .fill("browser-admin-password-123");
+  await dialog.getByRole("button", { name: "Sign in", exact: true }).click();
+  await admin
+    .getByRole("textbox", { name: "Search travel desk" })
+    .fill(booking.id);
+  await admin.getByRole("button", { name: "Approve dates & total" }).click();
+  await admin
+    .getByRole("dialog")
+    .getByRole("button", { name: "Approve booking", exact: true })
+    .click();
+  await expect(admin.locator(".operations-booking")).toHaveCount(0);
+  await page.reload();
+  await expect(
+    page.getByRole("button", { name: /Pay securely/ }),
+  ).toBeVisible();
+  let requestedBooking = "";
+  await page.route("**/api/payments/checkout", async (route) => {
+    requestedBooking = route.request().postDataJSON().bookingId;
+    await route.fulfill({
+      json: {
+        url: "https://checkout.stripe.com/c/pay/cs_test_browser_navigation",
+      },
+    });
+  });
+  await page.route("https://checkout.stripe.com/**", (route) =>
+    route.fulfill({
+      contentType: "text/html",
+      body: "<h1>Secure checkout</h1>",
+    }),
+  );
+  await page.getByRole("button", { name: /Pay securely/ }).click();
+  await page.waitForURL("https://checkout.stripe.com/**");
+  expect(requestedBooking).toBe(booking.id);
+  await page.goto("/payments/return?cancelled=1");
+  await expect(
+    page.getByRole("heading", { name: "Room to think it over." }),
+  ).toBeVisible();
+  await page.getByRole("link", { name: "View my journeys" }).click();
+  await expect(
+    page.getByRole("button", { name: /Pay securely/ }),
+  ).toBeVisible();
+  await adminContext.close();
+});
 
 test("finds destinations, filters results and handles an empty search", async ({
   page,
@@ -125,7 +236,9 @@ test("registers, sends a trip inquiry, persists it and cancels it", async ({
     .getByRole("dialog")
     .getByRole("button", { name: "Cancel inquiry", exact: true })
     .click();
-  await expect(page.locator(".status-badge")).toHaveText("Cancelled");
+  await expect(page.locator(".inquiry-card-top .status-badge")).toHaveText(
+    "Cancelled",
+  );
 });
 
 test("composes, edits, saves and reopens a personal itinerary", async ({

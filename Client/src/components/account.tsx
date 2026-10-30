@@ -1,5 +1,7 @@
 "use client";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
+import { PaymentDetails } from "./payments";
 import { useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { format, parseISO } from "date-fns";
@@ -59,7 +61,10 @@ export function exportPlan(plan: SavedPlan) {
 export function Account() {
   const { user, authLoading, openAuth, logout, toast } = useApp();
   const client = useQueryClient();
-  const [tab, setTab] = useState("Saved plans");
+  const params = useSearchParams();
+  const [tab, setTab] = useState(
+    params.get("tab") === "bookings" ? "Booking inquiries" : "Saved plans",
+  );
   const [selectedPlan, setSelectedPlan] = useState<SavedPlan | null>(null);
   const [confirm, setConfirm] = useState<{
     kind: "plan" | "booking";
@@ -360,7 +365,9 @@ export function Account() {
                     {booking.status === "INQUIRY"
                       ? "Inquiry received"
                       : booking.status === "CONFIRMED"
-                        ? "Confirmed"
+                        ? booking.payment?.status === "PAID"
+                          ? "Confirmed & paid"
+                          : "Approved"
                         : "Cancelled"}
                   </span>
                 </div>
@@ -381,12 +388,15 @@ export function Account() {
                 {booking.notes && (
                   <p className="inquiry-notes">{booking.notes}</p>
                 )}
+                <PaymentDetails booking={booking} />
                 <div className="inquiry-card-bottom">
                   <p>
                     {booking.status === "INQUIRY"
                       ? "Your inquiry is saved. Dates and pricing are subject to confirmation."
                       : booking.status === "CONFIRMED"
-                        ? "Your local team has confirmed this inquiry. Refer to your final proposal for arrangements."
+                        ? booking.payment?.status === "PAID"
+                          ? "Payment received. Your booking is confirmed; refer to your final proposal for travel arrangements."
+                          : "Your dates and total are approved. Complete secure checkout to finalize your booking."
                         : "This inquiry has been cancelled. Your next chapter is still out there."}
                   </p>
                   {booking.status !== "CANCELLED" && (
@@ -400,7 +410,9 @@ export function Account() {
                         })
                       }
                     >
-                      Cancel inquiry
+                      {booking.payment?.status === "PAID"
+                        ? "Request cancellation"
+                        : "Cancel inquiry"}
                     </button>
                   )}
                 </div>

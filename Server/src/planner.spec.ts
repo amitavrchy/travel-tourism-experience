@@ -1,7 +1,7 @@
 import { curatedPlan, validateInput } from './planner.js';
 import { readFileSync } from 'node:fs';
 import type { Row } from './store.service.js';
-const data = JSON.parse(readFileSync('../data/catalog.json', 'utf8')) as {
+const data = JSON.parse(readFileSync('data/catalog.json', 'utf8')) as {
   destinations: Row[];
   pois: Row[];
   experiences: Row[];

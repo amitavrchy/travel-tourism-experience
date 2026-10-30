@@ -153,8 +153,8 @@ export function BookingForm({
           starts here.
         </h3>
         <p>
-          We’ve saved your inquiry. Your dates and final price will be confirmed
-          before any payment.
+          Your inquiry is saved. Once the team approves your dates and total,
+          you can pay securely with Stripe from My journeys.
         </p>
         <div className="inquiry-reference">
           <small>INQUIRY REFERENCE</small>

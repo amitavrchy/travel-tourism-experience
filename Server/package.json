@@ -7,13 +7,18 @@
   "license": "UNLICENSED",
   "type": "module",
   "scripts": {
-    "build": "nest build",
+    "dev:all": "node scripts/dev.mjs",
+    "setup:all": "node scripts/check.mjs setup",
+    "check": "node scripts/check.mjs test",
+    "build:all": "node scripts/check.mjs build",
+    "smoke:stripe": "node --env-file=.env scripts/stripe-smoke.mjs",
+    "build": "prisma generate && nest build",
     "deploy": "nest deploy",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start",
     "start:dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",
-    "start:prod": "node dist/main",
+    "start:prod": "node dist/main.js",
     "lint": "oxlint --type-aware src/ test/",
     "test": "vitest run",
     "test:watch": "vitest",
@@ -38,7 +43,8 @@
     "passport": "^0.7.0",
     "passport-jwt": "^4.0.1",
     "reflect-metadata": "^0.2.2",
-    "rxjs": "^7.8.1"
+    "rxjs": "^7.8.1",
+    "stripe": "^23.1.0"
   },
   "overrides": {
     "deepmerge-ts": "^8.0.2"

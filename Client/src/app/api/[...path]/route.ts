@@ -36,6 +36,11 @@ async function proxy(
     "Content-Type": "application/json",
   };
   if (token) headers.Authorization = `Bearer ${token}`;
+  if (
+    path.join("/") === "payments/webhook" &&
+    request.headers.get("stripe-signature")
+  )
+    headers["stripe-signature"] = request.headers.get("stripe-signature")!;
   try {
     const body = ["GET", "HEAD"].includes(request.method)
       ? undefined

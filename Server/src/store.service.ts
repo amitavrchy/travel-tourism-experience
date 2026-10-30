@@ -8,7 +8,6 @@ import {
 import { PrismaClient } from '@prisma/client';
 import { randomUUID } from 'node:crypto';
 import { mkdir, readFile, rename, writeFile } from 'node:fs/promises';
-import { existsSync } from 'node:fs';
 import { resolve } from 'node:path';
 
 export type Row = { id: string; [key: string]: unknown };
@@ -20,7 +19,8 @@ export type Collection =
   | 'journal'
   | 'users'
   | 'plans'
-  | 'bookings';
+  | 'bookings'
+  | 'payments';
 type State = Record<Collection, Row[]>;
 type Delegate = {
   findMany(): Promise<Row[]>;
@@ -32,6 +32,10 @@ type Delegate = {
   }): Promise<Row>;
   update(args: { where: { id: string }; data: Partial<Row> }): Promise<Row>;
   delete(args: { where: { id: string } }): Promise<Row>;
+  updateMany(args: {
+    where: { id: string; status: { in: string[] } };
+    data: Partial<Row>;
+  }): Promise<{ count: number }>;
 };
 const delegates = {
   destinations: 'destination',
@@ -42,6 +46,7 @@ const delegates = {
   users: 'user',
   plans: 'tripPlan',
   bookings: 'booking',
+  payments: 'payment',
 } as const;
 export const publicCollections: Collection[] = [
   'destinations',
@@ -61,10 +66,7 @@ export class StoreService implements OnModuleInit, OnModuleDestroy {
 
   async onModuleInit() {
     const catalogPath =
-      process.env.CATALOG_PATH ||
-      (existsSync(resolve('../data/catalog.json'))
-        ? resolve('../data/catalog.json')
-        : resolve('data/catalog.json'));
+      process.env.CATALOG_PATH || resolve('data/catalog.json');
     const catalog = JSON.parse(
       await readFile(catalogPath, 'utf8'),
     ) as Partial<State>;
@@ -102,7 +104,10 @@ export class StoreService implements OnModuleInit, OnModuleDestroy {
     } else {
       await mkdir(this.directory, { recursive: true });
       try {
-        this.state = JSON.parse(await readFile(this.file, 'utf8')) as State;
+        this.state = {
+          payments: [],
+          ...JSON.parse(await readFile(this.file, 'utf8')),
+        } as State;
       } catch (error) {
         if ((error as NodeJS.ErrnoException).code !== 'ENOENT') throw error;
         this.state = {
@@ -114,6 +119,7 @@ export class StoreService implements OnModuleInit, OnModuleDestroy {
           users: [],
           plans: [],
           bookings: [],
+          payments: [],
           ...catalog,
         };
         await this.persist(this.state);
@@ -239,6 +245,27 @@ export class StoreService implements OnModuleInit, OnModuleDestroy {
           if (item.packageId === id) item.packageId = null;
         });
       return row;
+    });
+  }
+
+  async transitionPayment(
+    id: string,
+    changes: Partial<Row>,
+    allowed: string[],
+  ): Promise<Row> {
+    if (this.prisma) {
+      await this.delegate('payments').updateMany({
+        where: { id, status: { in: allowed } },
+        data: changes,
+      });
+      return this.find('payments', id);
+    }
+    return this.mutate((state) => {
+      const payment = state.payments.find((row) => row.id === id);
+      if (!payment) throw new NotFoundException('Payment not found.');
+      if (allowed.includes(String(payment.status)))
+        Object.assign(payment, changes);
+      return structuredClone(payment);
     });
   }
 

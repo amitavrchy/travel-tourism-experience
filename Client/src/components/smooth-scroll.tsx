@@ -18,9 +18,7 @@ export function SmoothScroll() {
       anchors: true,
       duration: 1.05,
       prevent: (node) =>
-        !!node.closest(
-          ".dialog,.leaflet-container,.map-sidebar",
-        ),
+        !!node.closest(".dialog,.leaflet-container,.map-sidebar"),
     });
     const observer = new MutationObserver(() => {
       if (document.body.style.overflow === "hidden") lenis.stop();

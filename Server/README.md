@@ -1,132 +1,151 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# Wanderline Server
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+NestJS API, PostgreSQL/Prisma models and migrations, Stripe payments, catalog data, deployment scripts, documentation and the optional Python AI service all live inside this folder. The repository contains only `Client/` and `Server/` (plus Git's hidden metadata).
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+## Local development
 
-## Description
+Requires Node.js 22+ and npm. From this folder:
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
-
-## Project setup
-
-```bash
-$ npm install
+```sh
+npm ci
+npm run start:dev
 ```
 
-## Compile and run the project
+In a second terminal run `npm ci` and `npm run dev` inside `Client`. For a checkout containing both folders, this convenience command finds free ports and starts both:
 
-```bash
-# development
-$ npm run start
-
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
+```sh
+npm run dev:all
 ```
 
-## Run tests
+`npm run setup:all` installs both sets of dependencies; `npm run build:all` builds both. These convenience scripts are optional; the Server builds and runs independently without Client files. Its catalog is in `data/catalog.json`.
 
-```bash
-# unit tests
-$ npm run test
+Copy `.env.example` to `.env` for a fresh checkout. This workspace already has the supplied Stripe **test** credentials and generated local administrator/session credentials in the ignored `.env`. Open that file locally to find `ADMIN_EMAIL` and `ADMIN_PASSWORD`; secrets are not committed. Sign in at the frontend's `/admin`, then open **Bookings & payments** (`/admin/payments`).
 
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
-```
+Default development storage is a serialized, atomic local store at `.data/store.json`. It preserves users, saved plans, inquiries, payments, refunds and administrator edits across restarts. Run one API instance in file mode. Use PostgreSQL for production and multiple instances; ephemeral deployment disks must not hold financial records.
 
 ## Deployment
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
+Deploy this folder as the backend root. No root-level package, shared folder or Client source is required.
 
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+| Setting | Value |
+| --- | --- |
+| Install | `npm ci --include=dev` |
+| Build | `npm run build` |
+| Release / migrations | `npx prisma migrate deploy` |
+| Start | `npm run start:prod` |
+| Health | `GET /health` |
 
-```bash
-$ npm install -g @nestjs/mau
-$ mau deploy
+Configure these runtime environment variables:
+
+```dotenv
+NODE_ENV=production
+HOST=0.0.0.0
+PORT=4000
+CLIENT_ORIGIN=https://your-frontend.example
+STORAGE_MODE=postgres
+DATABASE_URL=postgresql://USER:PASSWORD@HOST:5432/DATABASE
+JWT_SECRET=YOUR_OWN_LONG_RANDOM_SECRET
+ADMIN_EMAIL=YOUR_ADMIN_EMAIL
+ADMIN_PASSWORD=YOUR_OWN_STRONG_ADMIN_PASSWORD
+STRIPE_SECRET_KEY=YOUR_STRIPE_SECRET_KEY
+STRIPE_WEBHOOK_SECRET=YOUR_ENDPOINT_SIGNING_SECRET
 ```
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+The hosting provider may supply `PORT` automatically. `CLIENT_ORIGIN` must be the frontend's exact public origin; Stripe uses it to build success/cancel redirects. JWT secrets must be at least 32 characters in production. Admin passwords must contain at least 12 characters. Startup creates the configured admin only if its email is not already registered; it never silently promotes a traveler or resets an existing password.
 
-## Observability
+Prisma initializes the catalog once, using a durable marker so later restarts preserve edits **and deletions**. Existing installations apply the incremental `20261030010000_stripe_payments` migration; the initial migration has not been rewritten. New databases apply both. Back up a real production database before normal release maintenance.
 
-In production applications, observability is essential for understanding how your system behaves, detecting issues early, and maintaining reliable performance.
+For a local PostgreSQL instance, run `docker compose up -d`, configure `DATABASE_URL`, then `npx prisma migrate deploy` and `npm run seed`. A live PostgreSQL server/Docker daemon was unavailable in this workspace; schema validation and migration generation are checked, while integration tests use isolated durable file storage.
 
-[NestJS Observe](https://observe.nestjs.com) automatically instruments your NestJS application, giving you deep visibility into your system with minimal setup:
+Build a backend container with this folder as its build context:
 
-- **Distributed tracing:** Follow requests across services and understand how they flow through your system.
-- **Waterfall analysis:** Visualize request execution and identify slow operations, bottlenecks, and unexpected delays.
-- **Performance analysis:** Analyze application performance in real time and quickly pinpoint areas that need optimization.
-- **Metrics:** Track key application and infrastructure metrics to understand system health and performance trends.
-- **Logging:** Centralize and correlate logs with traces and other telemetry to make debugging easier.
-- **Error tracking:** Detect errors quickly and investigate their root causes with the surrounding context.
-- **SLA monitoring:** Track service-level objectives and identify when your application is approaching or exceeding defined thresholds.
-- **Alarms and alerts:** Set up alerts for critical errors, performance degradation, SLA violations, and other anomalies so your team can react quickly.
-
-To add it to this project, run this and approve the code it prints at [observe.nestjs.com/link](https://observe.nestjs.com/link) - signing up for free if you have no account:
-
-```bash
-$ npx @nestjs/observe link
+```sh
+docker build -t wanderline-server .
 ```
 
-It installs `@nestjs/observe`, wires it into `AppModule` and `main.ts`, and writes the app key and secret into `.env`, which every `nest start` script (`start`, `start:dev`, `start:debug`) then loads. In production, set `OBSERVE_APP_KEY` and `OBSERVE_APP_SECRET` in the environment instead.
+Pass environment secrets at runtime. `.dockerignore` excludes secrets, local records, virtual environments and caches. Container build execution requires Docker and has not been run here.
 
-Or do it by hand:
+## Booking and payment flow
 
-```bash
-$ npm install @nestjs/observe
+1. A signed-in traveler requests a package or saved-plan journey. Dates, guests, ownership and totals are checked by the server.
+2. At `/admin/payments`, an administrator reviews availability and the exact total, then approves it. Unapproved or cancelled bookings cannot start checkout.
+3. The traveler opens **My journeys → Booking inquiries → Pay securely**. The server creates a Stripe-hosted Checkout Session using the stored approved total, never a submitted browser amount.
+4. Stripe redirects to `/payments/return`. The API retrieves the session and PaymentIntent, checks ownership, booking reference, currency, amount received and mode, then records payment. Visiting a success URL alone cannot mark a booking paid.
+5. A Stripe receipt link appears in the account and travel desk. Payment records are kept separately from booking lifecycle status.
+6. An unpaid cancellation expires open checkout sessions. A paid cancellation enters the admin refund-review queue; it does **not** falsely claim an automatic refund.
+7. An administrator reviews and confirms a full refund. Stripe returns funds to the original method. The UI distinguishes pending, completed and failed refunds and retains the financial record.
+
+Checkout and refund calls use stable Stripe idempotency keys. Repeated clicks reuse an open session. Atomic status transitions prevent duplicate/out-of-order events from turning a paid/refunded payment back into an unpaid one. Partial refunds made in Stripe are included in the total when the remaining balance is refunded from the studio.
+
+### Required Stripe webhook configuration
+
+After the backend has a public HTTPS URL, create a Stripe webhook endpoint at:
+
+```text
+https://your-backend.example/payments/webhook
 ```
 
-Then follow the [setup guide](https://docs.nestjs.com/observability/sdk) - it takes a single import and an app key.
+Subscribe to:
 
-The free plan needs no payment details and covers 300,000 events a month. You can also browse the [live demo](https://www.observe-demo.nestjs.com/dashboard) first - the whole dashboard over a busy service's data, with nothing to install.
+```text
+checkout.session.completed
+checkout.session.async_payment_succeeded
+checkout.session.async_payment_failed
+checkout.session.expired
+charge.refunded
+refund.updated
+refund.failed
+```
 
-## Resources
+Copy that endpoint's signing secret into `STRIPE_WEBHOOK_SECRET`. It is a separate `whsec_…` secret, not the API secret key. The supplied document contained API keys but no webhook signing secret or deployment URL, so endpoint registration remains a deployment-time step. Live checkout is blocked without a signing secret. Test checkout can be reviewed locally using server-side reconciliation, but production fulfillment must use webhooks so payments are processed even if a traveler closes their browser.
 
-Check out a few resources that may come in handy when working with NestJS:
+Nest preserves the raw request body; the official Stripe SDK verifies signatures before events are handled. If routing the webhook through the frontend, `/api/payments/webhook` preserves the raw body and signature too, but the direct backend endpoint is preferable.
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Auto-instrument your application with [NestJS Observe](https://observe.nestjs.com). Distributed tracing, metrics, and logging made easy. Error tracking and performance monitoring for your NestJS applications.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+`STRIPE_PUBLISHABLE_KEY` is optional for this hosted integration; no Stripe secret is ever needed in Client. Keep test and live endpoint secrets separate. Payment receipts come from Stripe; the application itself does not have an outbound email provider configured.
 
-## Support
+Official references: [Hosted Checkout](https://docs.stripe.com/checkout/quickstart), [fulfillment](https://docs.stripe.com/checkout/fulfillment), [webhook signatures](https://docs.stripe.com/webhooks/signature).
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+## Admin capabilities
 
-## Stay in touch
+- Content studio: create/edit/delete destinations, POIs, experiences, multi-day journeys and journal stories.
+- Travel desk: approve/cancel bookings, review approved totals and traveler notes, track payment/receipt/refund status, review paid cancellation requests and confirm refunds.
+- Searchable customer directory, payment totals and CSV booking export. CSV cells are protected from spreadsheet formula injection.
+- All admin endpoints enforce the signed-in user's stored administrator role. Payment status cannot be manually set to “paid”.
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+## Optional AI
 
-## License
+The Python service lives in `ai/`; it is not needed for the API or payment flow. With no model/service, the planner uses an explicitly labeled itinerary grounded in the local destination catalog.
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+```sh
+cd ai
+python -m venv .venv
+# Windows: .venv\Scripts\Activate.ps1
+# macOS/Linux: source .venv/bin/activate
+pip install -r requirements.txt
+python -m uvicorn app.main:app --host 127.0.0.1 --port 8000
+```
+
+For real model composition configure `OPENAI_API_KEY` in `ai/.env`; the optional service uses Chroma, local deterministic retrieval embeddings, LangChain prompting and validated OpenAI structured output. Point `AI_SERVICE_URL` at it; set matching `AI_SERVICE_KEY` values for network access. A moved virtual environment should be recreated rather than relying on old activation paths.
+
+## Verification
+
+```sh
+npm test
+npm run test:e2e
+npm run check
+```
+
+`check` runs both builds, frontend lint, API tests and isolated desktop/mobile Playwright tests; it needs the sibling Client checkout and installed Chrome. The tests cover scrolling with normal motion, the 14px text floor, maps, authentication, planner persistence/editing, booking/cancellation, admin approval and secure checkout navigation. Financial tests cover ownership, amount/currency checks, signature verification, retries, idempotency and refund transitions.
+
+An opt-in sandbox check uses the configured **test-mode** key and refuses live keys:
+
+```sh
+npm run smoke:stripe
+npm run smoke:stripe -- --complete
+```
+
+The complete check starts isolated services, completes hosted Checkout with Stripe's documented test card, verifies the real sandbox PaymentIntent/receipt, then refunds that same sandbox payment. It passed in this workspace without moving real money. It requires the built Client, its Playwright dependency and installed Chrome. It does not provision a public webhook endpoint.
+
+Python tests: from `ai`, run `python -m unittest test_planner -v` with the virtual environment active.
+
+The original product specification is preserved at [docs/PROJECT_SPEC.md](docs/PROJECT_SPEC.md).

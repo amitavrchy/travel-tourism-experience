@@ -18,6 +18,35 @@ enum BookingStatus {
   CANCELLED
 }
 
+enum PaymentStatus {
+  PENDING
+  PROCESSING
+  PAID
+  FAILED
+  EXPIRED
+  REFUND_PENDING
+  REFUNDED
+}
+
+model Payment {
+  id                  String @id
+  bookingId           String
+  booking             Booking @relation(fields: [bookingId], references: [id], onDelete: Restrict)
+  userId              String
+  amountCents         Int
+  currency            String @default("usd")
+  status              PaymentStatus @default(PENDING)
+  paymentIntentId     String? @unique
+  checkoutUrl         String
+  receiptUrl          String?
+  refundId            String?
+  refundedAmountCents Int @default(0)
+  livemode            Boolean @default(false)
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @default(now())
+  @@index([bookingId])
+}
+
 model User {
   id           String @id @default(cuid())
   email        String @unique
@@ -115,6 +144,7 @@ model Booking {
   notes         String?
   totalEstimate Decimal @db.Decimal(10, 2)
   createdAt     DateTime @default(now())
+  payments      Payment[]
 }
 
 model JournalPost {

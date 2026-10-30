@@ -1,4 +1,4 @@
-import data from "../../../data/catalog.json";
+import data from "../data/catalog.json";
 import type { Catalog } from "./types";
 
 export const catalog: Catalog = data;

@@ -4,7 +4,7 @@ import path from "node:path";
 const nextConfig: NextConfig = {
   images: { qualities: [75, 90] },
   turbopack: {
-    root: path.resolve(process.cwd(), ".."),
+    root: path.resolve(process.cwd()),
     rules: {
       "*.css": {
         loaders: ["@tailwindcss/turbopack"],

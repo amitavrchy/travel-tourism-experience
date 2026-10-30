@@ -1,3 +1,10 @@
 node_modules
 dist
 .env
+.env.*
+.venv
+ai/.venv
+ai/.chroma
+.data
+coverage
+**/__pycache__

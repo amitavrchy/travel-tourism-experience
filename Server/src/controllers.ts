@@ -32,6 +32,7 @@ import {
   text,
 } from './validation.js';
 import { validateInput } from './planner.js';
+import { PaymentService } from './payments.js';
 
 @Controller('auth')
 export class AuthController {
@@ -94,11 +95,16 @@ export class CatalogController {
 @Controller()
 @UseGuards(AuthGuard)
 export class AccountController {
-  constructor(private readonly store: StoreService) {}
+  constructor(
+    private readonly store: StoreService,
+    private readonly payments: PaymentService,
+  ) {}
   @Get('bookings') async bookings(@Req() request: AuthRequest) {
-    return (await this.store.all('bookings'))
-      .filter((row) => row.userId === request.user.id)
-      .reverse();
+    return this.payments.attach(
+      (await this.store.all('bookings'))
+        .filter((row) => row.userId === request.user.id)
+        .reverse(),
+    );
   }
   @Post('bookings') async book(
     @Body() value: unknown,
@@ -154,7 +160,7 @@ export class AccountController {
       object(body).status !== 'CANCELLED'
     )
       throw new BadRequestException('This inquiry cannot be changed.');
-    return this.store.update('bookings', id, { status: 'CANCELLED' });
+    return this.payments.cancel(id, request.user.id);
   }
   @Get('plans') async plans(@Req() request: AuthRequest) {
     return (await this.store.all('plans'))
@@ -352,7 +358,10 @@ const fields: Record<
 @Controller('admin')
 @UseGuards(AdminGuard)
 export class AdminController {
-  constructor(private readonly store: StoreService) {}
+  constructor(
+    private readonly store: StoreService,
+    private readonly payments: PaymentService,
+  ) {}
   @Get(':collection') list(@Param('collection') name: string) {
     return this.store.all(this.collection(name));
   }
@@ -473,6 +482,8 @@ export class AdminController {
     @Param('id') id: string,
     @Body() body: unknown,
   ) {
+    if (name === 'bookings')
+      return this.payments.setBookingStatus(id, String(object(body).status));
     return this.store.update(
       this.collection(name),
       id,
