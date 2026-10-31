@@ -1,0 +1,26 @@
+﻿name: Keep All Render APIs Awake
+# GitHub delays/skips frequent cron runs, so each run loops for ~5h50m
+# pinging every API every 5 minutes. Hourly trigger + concurrency keeps one running.
+on:
+  schedule:
+    - cron: "7 * * * *"
+  workflow_dispatch:
+concurrency:
+  group: keep-all-awake
+  cancel-in-progress: false
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    timeout-minutes: 355
+    steps:
+      - name: Ping loop
+        run: |
+          URLS="https://wanderline-api.onrender.com/health https://maison-verdant-api.onrender.com/health https://last-lighthouse-api.onrender.com/health https://haven-api-17km.onrender.com/health https://rivalscope-api.onrender.com/api/health"
+          end=$(( $(date +%s) + 350*60 ))
+          while [ $(date +%s) -lt $end ]; do
+            for u in $URLS; do
+              code=$(curl -sS -o /dev/null -w "%{http_code}" --max-time 90 "$u" || echo 000)
+              echo "$(date -u +%H:%M:%S) $u -> $code"
+            done
+            sleep 300
+          done
