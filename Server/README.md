@@ -147,5 +147,3 @@ npm run smoke:stripe -- --complete
 The complete check starts isolated services, completes hosted Checkout with Stripe's documented test card, verifies the real sandbox PaymentIntent/receipt, then refunds that same sandbox payment. It passed in this workspace without moving real money. It requires the built Client, its Playwright dependency and installed Chrome. It does not provision a public webhook endpoint.
 
 Python tests: from `ai`, run `python -m unittest test_planner -v` with the virtual environment active.
-
-The original product specification is preserved at [docs/PROJECT_SPEC.md](docs/PROJECT_SPEC.md).
